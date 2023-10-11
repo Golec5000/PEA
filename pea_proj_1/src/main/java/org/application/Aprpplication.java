@@ -25,8 +25,7 @@ public class Aprpplication {
 
         bf.solve();
 
-        System.out.println(bf.getBestTour());
-        System.out.println(bf.getBestCost());
+        bf.displaySolution();
 
 
     }

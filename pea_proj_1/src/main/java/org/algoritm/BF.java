@@ -85,6 +85,10 @@ public class BF {
 
     }
 
+    public void displaySolution(){
+        System.out.println(this);
+    }
+
     private int calcPath(List<Integer> tmpPermutation) {
 
         int sum = 0;
@@ -101,4 +105,11 @@ public class BF {
         return sum;
     }
 
+    @Override
+    public String toString() {
+        return "BF = {" +
+                "bestCost=" + bestCost +
+                ", bestTour=" + bestTour +
+                '}';
+    }
 }
