@@ -1,10 +1,13 @@
 package org.algoritm;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class BF {
 
     private int[][] matrix;
@@ -13,103 +16,89 @@ public class BF {
 
     private int bestCost;
 
-    private int firstVertex;
-
     private List<Integer> bestTour;
+
 
     public BF(int[][] matrix) {
 
         setMatrix(matrix);
         setNumOfVertex(matrix.length);
         setBestCost(Integer.MAX_VALUE);
-        setFirstVertex(0);
-
+        setBestTour(new ArrayList<>());
     }
 
-    public List<Integer> solve(int vertexNumber, int sumCost, @NotNull List<Integer> arrayOfVisitedVertex) {
+    public void solve() {
 
-        if (arrayOfVisitedVertex.size() > getNumOfVertex()) return getBestTour();
+        List<Integer> arr = new ArrayList<>();
 
-        for (int i = 0; i < getNumOfVertex(); i++) {
+        for (int i = 0; i < getNumOfVertex(); i++) arr.add(i);
 
-            int repeated = 0;
+        List<Integer> tmp_permutation = new ArrayList<>(arr);
+        tmp_permutation.add(tmp_permutation.get(0));
 
-            if (getMatrix()[vertexNumber][i] == -1) continue;
-            if (getBestCost() < sumCost + getMatrix()[vertexNumber][i]) continue;
+        int cost = calcPath(tmp_permutation);
 
-            if (arrayOfVisitedVertex.size() == getNumOfVertex() && i == getFirstVertex()) {
+        if (cost < getBestCost()) {
 
-                arrayOfVisitedVertex.add(i);
-                sumCost += getMatrix()[vertexNumber][i];
-
-                if(sumCost < getBestCost()){
-                    setBestCost(sumCost);
-                    setBestTour(arrayOfVisitedVertex);
-                }
-
-            }
-
-            if(arrayOfVisitedVertex.size() == getNumOfVertex()) continue;
-
-            for(int j = 0; j < arrayOfVisitedVertex.size(); j++){
-
-                if(arrayOfVisitedVertex.get(j) == i) continue;
-
-                repeated = 1;
-                break;
-
-            }
-
-            if(repeated == 1) continue;
-
-            arrayOfVisitedVertex.add(i);
-            solve(i, sumCost + getMatrix()[vertexNumber][i], arrayOfVisitedVertex);
-            arrayOfVisitedVertex.remove(arrayOfVisitedVertex.size() - 1);
-
+            setBestCost(cost);
+            setBestTour(new ArrayList<>(tmp_permutation));
 
         }
 
-        return new ArrayList<>();
-    }
+        int n = arr.size();
+        int[] c = new int[n];
+        int i = 0;
 
 
-    public int[][] getMatrix() {
-        return matrix;
+        while (i < n) {
+            if (c[i] < i) {
+                if (i % 2 == 0) {
+                    int temp = arr.get(0);
+                    arr.set(0, arr.get(i));
+                    arr.set(i, temp);
+                } else {
+                    int temp = arr.get(c[i]);
+                    arr.set(c[i], arr.get(i));
+                    arr.set(i, temp);
+                }
+
+                tmp_permutation = new ArrayList<>(arr);         //ze stworzonej permutacji tworzymy pomoniczą liste
+                // zawierającą etap powtotu do wierzchołka startowego
+                tmp_permutation.add(tmp_permutation.get(0));
+
+                cost = calcPath(tmp_permutation);
+
+                if (cost < getBestCost()) {          //przypisanie najlepszej znalezionej ścierzki
+
+                    setBestCost(cost);
+                    setBestTour(new ArrayList<>(tmp_permutation));
+
+                }
+
+                c[i]++;
+                i = 0;
+            } else {
+                c[i] = 0;
+                i++;
+            }
+        }
+
     }
 
-    public void setMatrix(int[][] matrix) {
-        this.matrix = matrix;
+    private int calcPath(List<Integer> tmpPermutation) {
+
+        int sum = 0;
+
+        for (int i = 0; i < tmpPermutation.size() - 1; i++) {
+
+            int u = tmpPermutation.get(i);          //wierzchołek wyjściowy
+            int v = tmpPermutation.get(i + 1);      //wierzchołek do którego idziemy na ścierzce
+
+            sum += getMatrix()[u][v];
+
+        }
+
+        return sum;
     }
 
-    public int getNumOfVertex() {
-        return numOfVertex;
-    }
-
-    public void setNumOfVertex(int numOfVertex) {
-        this.numOfVertex = numOfVertex;
-    }
-
-    public int getBestCost() {
-        return bestCost;
-    }
-
-    public void setBestCost(int bestCost) {
-        this.bestCost = bestCost;
-    }
-
-    public int getFirstVertex() {
-        return firstVertex;
-    }
-
-    public void setFirstVertex(int firstVertex) {
-        this.firstVertex = firstVertex;
-    }
-
-    public List<Integer> getBestTour() {
-        return bestTour;
-    }
-
-    public void setBestTour(List<Integer> bestTour) {
-        this.bestTour = bestTour;
-    }
 }

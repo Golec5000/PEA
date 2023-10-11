@@ -2,7 +2,6 @@ package org.application;
 
 import org.algoritm.BF;
 
-import java.util.ArrayList;
 
 public class Aprpplication {
 
@@ -23,7 +22,11 @@ public class Aprpplication {
 
 
         BF bf = new BF(graph);
-        System.out.println(bf.solve(0,0,new ArrayList<>()));
+
+        bf.solve();
+
+        System.out.println(bf.getBestTour());
+        System.out.println(bf.getBestCost());
 
 
     }
