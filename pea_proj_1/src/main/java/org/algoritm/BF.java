@@ -63,12 +63,12 @@ public class BF {
                 }
 
                 tmp_permutation = new ArrayList<>(arr);         //ze stworzonej permutacji tworzymy pomoniczą liste
-                // zawierającą etap powtotu do wierzchołka startowego
+                                                                // zawierającą etap powtotu do wierzchołka startowego
                 tmp_permutation.add(tmp_permutation.get(0));
 
                 cost = calcPath(tmp_permutation);
 
-                if (cost < getBestCost()) {          //przypisanie najlepszej znalezionej ścierzki
+                if (cost < getBestCost()) {                     //przypisanie najlepszej znalezionej ścierzki
 
                     setBestCost(cost);
                     setBestTour(new ArrayList<>(tmp_permutation));
@@ -85,7 +85,7 @@ public class BF {
 
     }
 
-    public void displaySolution(){
+    public void displaySolution() {
         System.out.println(this);
     }
 
@@ -95,8 +95,8 @@ public class BF {
 
         for (int i = 0; i < tmpPermutation.size() - 1; i++) {
 
-            int u = tmpPermutation.get(i);          //wierzchołek wyjściowy
-            int v = tmpPermutation.get(i + 1);      //wierzchołek do którego idziemy na ścierzce
+            int u = tmpPermutation.get(i);                    //wierzchołek wyjściowy
+            int v = tmpPermutation.get(i + 1);                //wierzchołek do którego idziemy na ścierzce
 
             sum += getMatrix()[u][v];
 
