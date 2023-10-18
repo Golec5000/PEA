@@ -4,20 +4,17 @@ import org.algoritm.BF;
 import org.io.FileReader;
 
 
-public class Aprpplication {
+public class Application {
 
     public static void main(String[] args) {
 
         FileReader fileReader = new FileReader();
 
-        fileReader.read("tsp_10.txt");
-
-        fileReader.display();
+        fileReader.read("test_1.txt");
 
         BF bf = new BF(fileReader.getMatrix());
 
         bf.solve();
-
         bf.displaySolution();
 
 
