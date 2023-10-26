@@ -58,7 +58,7 @@ public class TestingClass {
         //dla 13
 //        testForRandomMatrix(13);
         //dla 14
-        testForRandomMatrix(14);
+//        testForRandomMatrix(14);
 
     }
 
@@ -86,7 +86,7 @@ public class TestingClass {
 
         System.out.println("Dla macierzy " + size);
 
-        for (int i = 95; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
 
             System.out.println((i + 1) + "/100");
 
