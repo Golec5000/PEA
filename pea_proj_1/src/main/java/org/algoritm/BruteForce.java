@@ -27,6 +27,7 @@ public class BruteForce {
         setBestTour(new ArrayList<>());
     }
 
+    //https://en.wikipedia.org/wiki/Heap%27s_algorithm
     public void solve() {
 
         List<Integer> arr = new ArrayList<>();
@@ -63,7 +64,7 @@ public class BruteForce {
                 }
 
                 tmp_permutation = new ArrayList<>(arr);         //ze stworzonej permutacji tworzymy pomoniczą liste
-                // zawierającą etap powtotu do wierzchołka startowego
+                                                                // zawierającą etap powtotu do wierzchołka startowego
                 tmp_permutation.add(tmp_permutation.get(0));
 
                 cost = calcPath(tmp_permutation);

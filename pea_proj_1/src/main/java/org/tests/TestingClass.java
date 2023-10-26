@@ -5,8 +5,6 @@ import org.io.ReadFromFile;
 import org.io.WriterToFile;
 import org.timer.TimeWatch;
 
-import java.util.Arrays;
-
 public class TestingClass {
 
     private static final ReadFromFile fileReader = new ReadFromFile();
@@ -88,7 +86,7 @@ public class TestingClass {
 
         System.out.println("Dla macierzy " + size);
 
-        for (int i = 47; i < 100; i++) {
+        for (int i = 95; i < 100; i++) {
 
             System.out.println((i + 1) + "/100");
 
