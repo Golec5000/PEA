@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -24,11 +25,10 @@ public class ReadFromFile {
             scanner.nextLine();
             scanner.nextLine();
             scanner.nextLine();
-            int len = Integer.parseInt(scanner.nextLine().split(" ")[1]);
+            int len = Integer.parseInt(scanner.nextLine().split("\\s+")[1]);
             scanner.nextLine();
             scanner.nextLine();
             scanner.nextLine();
-
 
             setMatrix(new int[len][len]);
 
@@ -59,9 +59,7 @@ public class ReadFromFile {
                                     .mapToInt(Integer::parseInt)
                                     .toArray();
 
-                        } catch (NumberFormatException ignore) {
-
-                        }
+                        } catch (NumberFormatException ignored) {}
                     }
 
                 }

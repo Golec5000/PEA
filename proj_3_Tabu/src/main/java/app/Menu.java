@@ -5,6 +5,7 @@ import algorilm.TabuSearch;
 import io.ReadFromFile;
 import lombok.Getter;
 import lombok.Setter;
+import tests.TestingClass;
 
 
 import java.util.Scanner;
@@ -16,12 +17,13 @@ public class Menu {
     private ReadFromFile readFromFile;
     private AlgInterface alg;
     private int timeLimit = 120000;
+    private TestingClass testingClass;
 
     public Menu() {
 
         setReadFromFile(new ReadFromFile());
         setAlg(null);
-
+        setTestingClass(new TestingClass());
     }
 
     private void mainMenuDisplay() {
@@ -99,6 +101,16 @@ public class Menu {
                     setAlg(new TabuSearch(getReadFromFile().getMatrix(), getTimeLimit(), 3));
                     getAlg().solve();
                     System.out.println(getAlg());
+                    break;
+
+                case 100:
+                    getTestingClass().testSwap();
+                    break;
+                case 101:
+                    getTestingClass().testInsert();
+                    break;
+                case 102:
+                    getTestingClass().testInverse();
                     break;
 
 

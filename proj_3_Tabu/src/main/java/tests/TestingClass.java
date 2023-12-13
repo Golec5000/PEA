@@ -14,40 +14,57 @@ public class TestingClass {
 
     private static AlgInterface alg;
 
-    private final int timeLimit = 120000;
-
-    private final String[] files = {
+    private final String[] files1 = {
             "br17.atsp",
             "ftv38.atsp",
             "ftv47.atsp",
-            "ftv53.atsp",
-            "ftv64.atsp",
-            "ftv70.atsp",
+            "ft53.atsp"
+
+    };
+
+    private final String[] files2 = {
+//            "ftv64.atsp",
+            "ft70.atsp",
             "kro124p.atsp",
-            "ftv170.atsp",
+            "ftv170.atsp"
+
+    };
+
+    private final String[] files3 = {
             "rbg323.atsp",
             "rbg358.atsp",
             "rbg403.atsp",
             "rbg443.atsp"
+
     };
 
     public void testSwap() {
 
         fileWriter.save("TS_Swap.txt", "Nazwa_pliku;" + "czas_wykonania[ms];" + "koszt_ścierzki;" + "ścierzka");
 
-        for (String file : files) {
-            swapTest(file, timeLimit, 1);
+        System.out.println("Testowanie algorytmu Tabu Search dla metody sąsiedztwa Swap()");
+
+        for (String file : files1) {
+            swapTest(file, 120000);
+        }
+
+        for (String file : files2) {
+            swapTest(file, 240000);
+        }
+
+        for (String file : files3) {
+            swapTest(file, 360000);
         }
 
     }
 
-    public void swapTest(String filename, int timeLimit, int neighbor) {
+    public void swapTest(String filename, int timeLimit) {
 
         fileReader.read(filename);
 
         for (int i = 0; i < 10; i++) {
-
-            alg = new TabuSearch(fileReader.getMatrix(), timeLimit, neighbor);
+            System.out.println(filename + " " + (i + 1));
+            alg = new TabuSearch(fileReader.getMatrix(), timeLimit, 1);
             alg.solve();
             fileWriter.save("TS_Swap.txt", filename + ";" + alg.toString());
         }
@@ -58,20 +75,32 @@ public class TestingClass {
 
         fileWriter.save("TS_Insert.txt", "Nazwa_pliku;" + "czas_wykonania[ms];" + "koszt_ścierzki;" + "ścierzka");
 
-        for (String file : files) {
-            insertTest(file, timeLimit, 2);
+        System.out.println("Testowanie algorytmu Tabu Search dla metody sąsiedztwa Insert()");
+
+        for (String file : files1) {
+            insertTest(file, 120000);
         }
+
+        for (String file : files2) {
+            insertTest(file, 240000);
+        }
+
+        for (String file : files3) {
+            insertTest(file, 360000);
+        }
+
 
     }
 
-    private void insertTest(String file, int timeLimit, int neighbor) {
+    private void insertTest(String file,int timeLimit) {
 
 
         fileReader.read(file);
 
         for (int j = 0; j < 10; j++) {
 
-            alg = new TabuSearch(fileReader.getMatrix(), timeLimit, neighbor);
+            System.out.println(file + " " + (j + 1));
+            alg = new TabuSearch(fileReader.getMatrix(), timeLimit, 2);
             alg.solve();
             fileWriter.save("TS_Insert.txt", file + ";" + alg.toString());
         }
@@ -79,22 +108,30 @@ public class TestingClass {
 
     public void testInverse() {
 
-        fileWriter.save("TS_Inverse.txt", "Nazwa_pliku;" + "czas_wykonania[ms];" + "koszt_ścierzki;" + "ścierzka");
+//        fileWriter.save("TS_Inverse.txt", "Nazwa_pliku;" + "czas_wykonania[ms];" + "koszt_ścierzki;" + "ścierzka");
+        System.out.println("Testowanie algorytmu Tabu Search dla metody sąsiedztwa Inverse()");
 
-        for (String file : files) {
-            inverseTest(file, timeLimit, 3);
+//        for (String file : files1) {
+//            inverseTest(file, 120000);
+//        }
+
+        for (String file : files2) {
+            inverseTest(file, 240000);
         }
 
+        for (String file : files3) {
+            inverseTest(file, 360000);
+        }
     }
 
-    private void inverseTest(String file, int timeLimit, int neighbor) {
-
+    private void inverseTest(String file,int timeLimit) {
 
         fileReader.read(file);
 
         for (int j = 0; j < 10; j++) {
 
-            alg = new TabuSearch(fileReader.getMatrix(), timeLimit, neighbor);
+            System.out.println(file + " " + (j + 1));
+            alg = new TabuSearch(fileReader.getMatrix(), timeLimit, 3);
             alg.solve();
             fileWriter.save("TS_Inverse.txt", file + ";" + alg.toString());
         }
