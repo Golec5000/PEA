@@ -3,19 +3,19 @@ package algorilm;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.IntStream;
 
 @Setter
 @Getter
-public class TabuSearch implements AlgInterface{
+public class TabuSearch implements AlgInterface {
 
     private long millisActualTime;  //zmienne do pomiaru czasu
     private long executionTime;     //zmienna pomocnicza do pomiaru czasu oraz sprawdzania czy algorytm nie przekroczył czasu
     private long bestSolutionTime;  //zminne przechowująca czas dla najlepszego rozwiązania
     private final long timeLimit;   //zmienna przechowująca maksymalny czas wykonywania algorytmu, ustawiana jest w konstruktorze
 
-    public int[] bestPath; //najlepsza ścieżka
+    public int[] bestPath;          //najlepsza ścieżka
     public int bestCost;
 
     Random rand = new Random();
@@ -24,7 +24,7 @@ public class TabuSearch implements AlgInterface{
     private int[][] graph;
     private int numberOfCities;
 
-    public TabuSearch(int [][]matrix, long timeLimit, int neighbor) {
+    public TabuSearch(int[][] matrix, long timeLimit, int neighbor) {
         this.timeLimit = timeLimit;
         this.neighbor = neighbor;
 
@@ -43,7 +43,7 @@ public class TabuSearch implements AlgInterface{
 
         int[][] tabuMatrix = new int[getNumberOfCities()][getNumberOfCities()];
 
-        int iterations = 10 * getNumberOfCities(); //liczba iteracji to 10 krotnosc liczby miast
+        int iterations = 4 * getNumberOfCities(); //liczba iteracji to 4 -krotnosc liczby miast
         int nextCost;
         int currentCost;
 
@@ -52,7 +52,7 @@ public class TabuSearch implements AlgInterface{
         //stworzenie pierwszej sciezki jako sciezki zachlannej
         currentPath = generateGreedyPath();
 
-        while (true){
+        while (true) {
 
             nextPath = currentPath;
             currentCost = calculatePathCost(currentPath);
@@ -65,7 +65,7 @@ public class TabuSearch implements AlgInterface{
                 for (int i = 1; i < getNumberOfCities(); i++) {
                     for (int j = i + 1; j < getNumberOfCities(); j++) {
 
-                        switch (getNeighbor()){
+                        switch (getNeighbor()) {
                             case 1:
                                 swap(i, j, currentPath);
                                 break;
@@ -73,7 +73,7 @@ public class TabuSearch implements AlgInterface{
                                 insert(i, j, currentPath);
                                 break;
                             case 3:
-                                makeReverse(i, j, currentPath);
+                                inverse(i, j, currentPath);
                                 break;
                         }
 
@@ -101,48 +101,43 @@ public class TabuSearch implements AlgInterface{
                 for (int x = 0; x < getNumberOfCities(); x++) {
                     for (int y = 0; y < getNumberOfCities(); y++) {
                         if (tabuMatrix[x][y] > 0) {
-                            tabuMatrix[x][y] --;      //dekrementacja o 1
+                            tabuMatrix[x][y]--;      //dekrementacja o 1
                         }
                     }
                 }
 
-                currentPath = shufflePath(); //dywersyfikacja sciezki
+                currentPath = shufflePath(currentPath); //dywersyfikacja sciezki
 
                 setExecutionTime(System.currentTimeMillis() - getMillisActualTime()); //zapisanie czasu wykonania algorytmu
 
-                if (getExecutionTime() > getTimeLimit()) return; //przekroczenie maksymalnego czasu, siłowe zakończenie algorytmu
+                if (getExecutionTime() > getTimeLimit())
+                    return; //przekroczenie maksymalnego czasu, siłowe zakończenie algorytmu
             }
         }
 
     }
 
-    private int[] shufflePath() {//przetasowanie ścieżki
-        int[] randomPath = new int[getNumberOfCities()];
+    private int[] shufflePath(int[] currentPath) {//przetasowanie ścieżki
 
-        for (int i = 0; i < getNumberOfCities(); i++) randomPath[i] = i;
+        List<Integer> list = new ArrayList<>(Arrays.stream(currentPath).boxed().toList());
+        Collections.shuffle(list);
 
-        for (int i = 1; i < randomPath.length; i++) {//funkcja losująca kolejność
-            int randomIndexToSwap = getRand().nextInt(randomPath.length - 1) + 1;//wszystkie oprocz 0
-            int temp = randomPath[randomIndexToSwap];
-            randomPath[randomIndexToSwap] = randomPath[i];
-            randomPath[i] = temp;
-        }
-
-        return randomPath;
+        return list.stream().mapToInt(i -> i).toArray();
     }
 
     private int[] generateGreedyPath() {
         int[] greedyPath = new int[getNumberOfCities()];
         boolean[] visited = new boolean[getNumberOfCities()];
 
-        // Start from the first city
-        greedyPath[0] = 0;
-        visited[0] = true;
+        // Zaczynamy od losowego miasta
+        int startCity = getRand().nextInt(getNumberOfCities());
+        greedyPath[0] = startCity;
+        visited[startCity] = true;
 
         for (int i = 1; i < getNumberOfCities(); i++) {
             int best = -1;
             for (int j = 0; j < getNumberOfCities(); j++) {
-                if (!visited[j] && (best == -1 || graph[greedyPath[i - 1]][j] < graph[greedyPath[i - 1]][best])) {
+                if (!visited[j] && (best == -1 || getGraph()[greedyPath[i - 1]][j] < getGraph()[greedyPath[i - 1]][best])) {
                     best = j;
                 }
             }
@@ -154,11 +149,10 @@ public class TabuSearch implements AlgInterface{
     }
 
     private int calculatePathCost(int[] path) {
-        int cost = 0;
-
-        for (int i = 0; i < path.length - 1; i++) cost += getGraph()[path[i]][path[i + 1]];
-        cost += getGraph()[(path[(path.length - 1)])][path[0]];
-
+        int cost = IntStream.range(0, path.length - 1)
+                .map(i -> getGraph()[path[i]][path[i + 1]])
+                .sum();
+        cost += getGraph()[path[path.length - 1]][path[0]];
         return cost;
     }
 
@@ -186,7 +180,7 @@ public class TabuSearch implements AlgInterface{
         System.arraycopy(tempTab, 0, path, 0, path.length);
     }
 
-    private void makeReverse(int i, int j, int[] path) {
+    private void inverse(int i, int j, int[] path) {
         int temp;
         while (i < j) {
             temp = path[i];

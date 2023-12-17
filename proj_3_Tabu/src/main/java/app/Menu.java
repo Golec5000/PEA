@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import tests.TestingClass;
 
-
 import java.util.Scanner;
 
 @Setter
