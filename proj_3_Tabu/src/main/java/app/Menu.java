@@ -15,7 +15,6 @@ public class Menu {
 
     private ReadFromFile readFromFile;
     private AlgInterface alg;
-    private int timeLimit = 120000;
     private TestingClass testingClass;
 
     public Menu() {
@@ -39,6 +38,7 @@ public class Menu {
     public void mainMenu() {
 
         int num;
+        long time;
 
         do {
 
@@ -76,7 +76,12 @@ public class Menu {
                         break;
                     }
 
-                    setAlg(new TabuSearch(getReadFromFile().getMatrix(), getTimeLimit(), 1));
+                    System.out.println("Podaj czas w sekundach");
+                    time = new Scanner(System.in).nextLong();
+
+                    if(time <= 0) time = 120;
+
+                    setAlg(new TabuSearch(getReadFromFile().getMatrix(), time * 1000, 1));
                     getAlg().solve();
                     System.out.println(getAlg());
 
@@ -86,8 +91,12 @@ public class Menu {
                         System.out.println("Brak wczytanej macierzy");
                         break;
                     }
+                    System.out.println("Podaj czas w sekundach");
+                    time = new Scanner(System.in).nextLong();
 
-                    setAlg(new TabuSearch(getReadFromFile().getMatrix(), getTimeLimit(), 2));
+                    if(time <= 0) time = 240;
+
+                    setAlg(new TabuSearch(getReadFromFile().getMatrix(), time * 1000, 2));
                     getAlg().solve();
                     System.out.println(getAlg());
                     break;
@@ -97,7 +106,12 @@ public class Menu {
                         break;
                     }
 
-                    setAlg(new TabuSearch(getReadFromFile().getMatrix(), getTimeLimit(), 3));
+                    System.out.println("Podaj czas w sekundach");
+                    time = new Scanner(System.in).nextLong();
+
+                    if(time <= 0) time = 360;
+
+                    setAlg(new TabuSearch(getReadFromFile().getMatrix(), time * 1000, 3));
                     getAlg().solve();
                     System.out.println(getAlg());
                     break;
