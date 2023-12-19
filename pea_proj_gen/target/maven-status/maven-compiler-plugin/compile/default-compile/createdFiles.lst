@@ -1,0 +1,7 @@
+org\application\main\Application.class
+org\application\alg\GenAlg.class
+org\application\io\WriterToFile.class
+org\application\io\ReadFromFile.class
+org\application\main\Menu.class
+org\application\alg\AlgInterface.class
+org\application\tests\TestingClass.class
