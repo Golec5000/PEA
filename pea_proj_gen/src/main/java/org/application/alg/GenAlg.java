@@ -46,6 +46,7 @@ public class GenAlg implements AlgInterface {
 
         setMutationRate(mutationRate);
         setTimeLimit(timeLimit);
+        setExecutionTime(0);
 
         setCrossType(crossType);
         setMutationType(mutationType);
@@ -78,7 +79,7 @@ public class GenAlg implements AlgInterface {
 
         setMillisActualTime(System.currentTimeMillis());
 
-        while (true) {
+        while (getExecutionTime() < getTimeLimit()) {
 
             ratedPopulation = createFilledTab(getPopulationSize());
 
@@ -151,8 +152,6 @@ public class GenAlg implements AlgInterface {
 
             setExecutionTime(System.currentTimeMillis() - getMillisActualTime());
 
-            if (getExecutionTime() > getTimeLimit()) return;
-
         }
 
     }
@@ -208,7 +207,7 @@ public class GenAlg implements AlgInterface {
             if (offspring[i] == 0) {
                 for (int j = 0; j < size; j++) {
                     int gene = parent2[j];
-                    if (isntInPath(gene, offspring)) {
+                    if (isNotInPath(gene, offspring)) {
                         offspring[i] = gene;
                         break;
                     }
@@ -234,7 +233,7 @@ public class GenAlg implements AlgInterface {
         int current = end;
         for (int i = end; i < end + size; i++) {
             int gene = parent2[i % size];
-            if (isntInPath(gene, offspring)) {
+            if (isNotInPath(gene, offspring)) {
                 offspring[current % size] = gene;
                 current++;
             }
@@ -243,8 +242,9 @@ public class GenAlg implements AlgInterface {
         return offspring;
     }
 
-    private boolean isntInPath(int value, int[] path) {
-        return Arrays.stream(path).noneMatch(i -> i == value);
+    private boolean isNotInPath(int value, int[] path) {
+        return Arrays.stream(path)
+                .noneMatch(i -> i == value);
     }
 
     private int findMinIndex(int[] array) {
