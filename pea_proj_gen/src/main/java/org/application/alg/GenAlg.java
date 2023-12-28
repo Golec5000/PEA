@@ -33,8 +33,12 @@ public class GenAlg implements AlgInterface {
     private long bestSolutionTime;
     private long timeLimit;
 
+    public GenAlg() {
+    }
+
 
     public GenAlg(int[][] matrix, int populationSize, double crossRate, double mutationRate, long timeLimit, int tournamentSize, int crossType, int mutationType) {
+
         setMatrix(matrix);
         setNumberOfVertex(matrix.length);
 
@@ -134,7 +138,7 @@ public class GenAlg implements AlgInterface {
 
                 switch (getMutationType()) {
                     case 0:
-                        insertMutation(p1, p2, population[p3]);
+                        inversionMutation(p1, p2, population[p3]);
                         break;
                     case 1:
                         swapMutation(p1, p2, population[p3]);
@@ -175,25 +179,35 @@ public class GenAlg implements AlgInterface {
         path[i] = path[i] ^ path[j];
     }
 
+    private void inversionMutation(int x, int z, int[] path) {
+
+        int start;
+        int end;
+
+        if (x < z) {
+            start = x;
+            end = z;
+        } else {
+            start = z;
+            end = x;
+        }
+
+        for (int i = start, j = end; i < j; i++, j--) {
+            path[i] = path[i] ^ path[j];
+            path[j] = path[i] ^ path[j];
+            path[i] = path[i] ^ path[j];
+        }
+    }
+
     private int calculatePathLength(int[] path) {
         return IntStream.range(0, path.length - 1)
                 .map(i -> getMatrix()[path[i]][path[i + 1]])
                 .sum() + getMatrix()[path[path.length - 1]][path[0]];
     }
 
-    private void insertMutation(int x, int z, int[] path) {
-        int temp = path[x];
-        if (x < z) {
-            System.arraycopy(path, x + 1, path, x, z - x);
-        } else {
-            System.arraycopy(path, z, path, z + 1, x - z);
-        }
-        path[z] = temp;
-    }
-
     private int[] PMXCross(int[] parent1, int[] parent2) {
         int size = parent1.length;
-        int[] offspring = new int[size];
+        int[] offspring = createFilledTab(size); // Initialize with -1
 
         // Step 1: Select a random subset of the first parent's path
         int start = getRand().nextInt(size);
@@ -204,7 +218,7 @@ public class GenAlg implements AlgInterface {
 
         // Step 3: Copy the remaining genes to the offspring in the order they appear in the second parent
         for (int i = 0; i < size; i++) {
-            if (offspring[i] == 0) {
+            if (offspring[i] == -1) {
                 for (int j = 0; j < size; j++) {
                     int gene = parent2[j];
                     if (isNotInPath(gene, offspring)) {
@@ -220,7 +234,7 @@ public class GenAlg implements AlgInterface {
 
     private int[] OXCross(int[] parent1, int[] parent2) {
         int size = parent1.length;
-        int[] offspring = new int[size];
+        int[] offspring = createFilledTab(size); // Initialize with -1
 
         // Step 1: Select a random subset of the first parent's path
         int start = getRand().nextInt(size);
@@ -261,7 +275,7 @@ public class GenAlg implements AlgInterface {
 
     private int[][] createFilledDoubleTab(int populationSize, int graphSize) {
         int[][] tab = new int[populationSize][graphSize];
-        for (int i = 0; i < populationSize; i++)  tab[i] = createFilledTab(graphSize);
+        for (int i = 0; i < populationSize; i++) tab[i] = createFilledTab(graphSize);
         return tab;
     }
 
