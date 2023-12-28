@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 @Getter
 public class GenAlg implements AlgInterface {
 
-    private Random rand = new Random();
+    private Random rand;
 
     private int[][] matrix;
 
@@ -33,10 +33,6 @@ public class GenAlg implements AlgInterface {
     private long bestSolutionTime;
     private long timeLimit;
 
-    public GenAlg() {
-    }
-
-
     public GenAlg(int[][] matrix, int populationSize, double crossRate, double mutationRate, long timeLimit, int tournamentSize, int crossType, int mutationType) {
 
         setMatrix(matrix);
@@ -54,6 +50,9 @@ public class GenAlg implements AlgInterface {
 
         setCrossType(crossType);
         setMutationType(mutationType);
+
+        setRand(new Random());
+
     }
 
     @Override
@@ -181,13 +180,10 @@ public class GenAlg implements AlgInterface {
 
     private void inversionMutation(int x, int z, int[] path) {
 
-        int start;
-        int end;
+        int start = x;
+        int end = z;
 
-        if (x < z) {
-            start = x;
-            end = z;
-        } else {
+        if (x > z) {
             start = z;
             end = x;
         }
