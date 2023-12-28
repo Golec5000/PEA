@@ -4,7 +4,9 @@ package org.application.main;
 import lombok.Getter;
 import lombok.Setter;
 import org.application.alg.AlgInterface;
+import org.application.alg.CrossType;
 import org.application.alg.GenAlg;
+import org.application.alg.MutationType;
 import org.application.io.ReadFromFile;
 import org.application.tests.TestingClass;
 
@@ -18,8 +20,11 @@ public class Menu {
     private AlgInterface alg;
     private TestingClass testingClass;
 
-    private int crossMethod;
-    private int mutationMethod;
+    private Scanner scanner;
+
+    private CrossType crossMethod;
+    private MutationType mutationMethod;
+
     private int numberOfPopulation;
     private int tournamentSize;
 
@@ -42,32 +47,41 @@ public class Menu {
 
         setTimeLimit(120000);
 
+        setScanner(new Scanner(System.in));
+
+        setCrossMethod(CrossType.PMX);
+        setMutationMethod(MutationType.INVERSION);
+
     }
 
     private void mainMenuDisplay() {
 
-        System.out.println("1 -> Wyczytanie macierzy z pliku .atsp");
-        System.out.println("2 -> Wyświelenie wczytanej macierzy");
-        System.out.println("3 -> Wybór metody krzyżowania");
-        System.out.println("4 -> Wybór metody mutacji");
-        System.out.println("5 -> czas stopu");
-        System.out.println("6 -> Procent krzyżowania");
-        System.out.println("7 -> Procent mutacji");
-        System.out.println("8 -> Rozmiar populacji");
-        System.out.println("9 -> Uruchomienie algorytmu");
-        System.out.println("0 -> Zakończenie programu");
+        StringBuilder sb = new StringBuilder();
 
-        System.out.println();
+        sb.append("1 -> Wyczytanie macierzy z pliku .atsp\n");
+        sb.append("2 -> Wyświelenie wczytanej macierzy\n");
+        sb.append("3 -> Wybór metody krzyżowania\n");
+        sb.append("4 -> Wybór metody mutacji\n");
+        sb.append("5 -> czas stopu\n");
+        sb.append("6 -> Procent krzyżowania\n");
+        sb.append("7 -> Procent mutacji\n");
+        sb.append("8 -> Rozmiar populacji\n");
+        sb.append("9 -> Uruchomienie algorytmu\n");
+        sb.append("0 -> Zakończenie programu\n");
 
-        System.out.println("Obecne ustawienia");
-        System.out.println("Metoda krzyżowania: " + (getCrossMethod() == 0 ? "PMX" : "OX"));
-        System.out.println("Metoda mutacji: " + (getMutationMethod() == 0 ? "Inversion" : "Swap"));
-        System.out.println("Czas stopu: " + (getTimeLimit() / 1000) + " s");
-        System.out.println("Procent krzyżowania: " + getCrossRate());
-        System.out.println("Procent mutacji: " + getMutationRate());
-        System.out.println("Rozmiar populacji: " + getNumberOfPopulation());
+        sb.append("\n");
 
-        System.out.print("Wybór opcji: ");
+        sb.append("Obecne ustawienia\n");
+        sb.append("Metoda krzyżowania: ").append(getCrossMethod() == CrossType.PMX ? "PMX" : "OX").append("\n");
+        sb.append("Metoda mutacji: ").append(getMutationMethod() == MutationType.INVERSION ? "Inversion" : "Swap").append("\n");
+        sb.append("Czas stopu: ").append(getTimeLimit() / 1000).append(" s\n");
+        sb.append("Procent krzyżowania: ").append(getCrossRate()).append("\n");
+        sb.append("Procent mutacji: ").append(getMutationRate()).append("\n");
+        sb.append("Rozmiar populacji: ").append(getNumberOfPopulation()).append("\n");
+
+        sb.append("Wybór opcji: ");
+
+        System.out.println(sb.toString());
 
     }
 
@@ -78,7 +92,7 @@ public class Menu {
         do {
 
             mainMenuDisplay();
-            num = new Scanner(System.in).nextInt();
+            num = getScanner().nextInt();
 
             System.out.println("\n");
 
@@ -90,7 +104,7 @@ public class Menu {
                 case 1:
 
                     System.out.println("Podaj nazwę pliku do wczytania (bez .atsp)");
-                    String filename = new Scanner(System.in).nextLine();
+                    String filename = getScanner().nextLine();
                     getReadFromFile().read(filename + ".atsp");
 
                     break;
@@ -113,18 +127,18 @@ public class Menu {
                     System.out.println("0 -> PMX");
                     System.out.println("1 -> OX");
 
-                    int crossMethod = new Scanner(System.in).nextInt();
+                    int crossMethodTmp = getScanner().nextInt();
 
-                    switch (crossMethod) {
+                    switch (crossMethodTmp) {
                         case 0:
-                            setCrossMethod(0);
+                            setCrossMethod(CrossType.PMX);
                             break;
                         case 1:
-                            setCrossMethod(1);
+                            setCrossMethod(CrossType.OX);
                             break;
                         default:
                             System.out.println("Brak takiej opcji, algorytm PMX zostanie wybrany domyślnie");
-                            setCrossMethod(0);
+                            setCrossMethod(CrossType.PMX);
                             break;
                     }
 
@@ -136,18 +150,18 @@ public class Menu {
                     System.out.println("0 -> Inversion");
                     System.out.println("1 -> Swap");
 
-                    int mutationMethod = new Scanner(System.in).nextInt();
+                    int mutationMethodTmp = getScanner().nextInt();
 
-                    switch (mutationMethod) {
+                    switch (mutationMethodTmp) {
                         case 0:
-                            setMutationMethod(0);
+                            setMutationMethod(MutationType.INVERSION);
                             break;
                         case 1:
-                            setMutationMethod(1);
+                            setMutationMethod(MutationType.SWAP);
                             break;
                         default:
                             System.out.println("Brak takiej opcji, algorytm Inversion zostanie wybrany domyślnie");
-                            setMutationMethod(0);
+                            setMutationMethod(MutationType.INVERSION);
                             break;
                     }
 
@@ -156,32 +170,32 @@ public class Menu {
                 case 5:
 
                     System.out.println("Podaj czas stopu w sekundach");
-                    long timeLimit = new Scanner(System.in).nextLong();
-                    setTimeLimit(Math.abs(timeLimit * 1000));
+                    long timeLimitTmp = getScanner().nextLong();
+                    setTimeLimit(Math.abs(timeLimitTmp * 1000));
 
                     break;
 
                 case 6:
 
                     System.out.println("Podaj procent krzyżowania");
-                    float crossRate = new Scanner(System.in).nextFloat();
-                    setCrossRate(Math.abs(crossRate));
+                    float crossRateTmp = getScanner().nextFloat();
+                    setCrossRate(Math.abs(crossRateTmp));
 
                     break;
 
                 case 7:
 
                     System.out.println("Podaj procent mutacji");
-                    float mutationRate = new Scanner(System.in).nextFloat();
-                    setMutationRate(Math.abs(mutationRate));
+                    float mutationRateTmp = getScanner().nextFloat();
+                    setMutationRate(Math.abs(mutationRateTmp));
 
                     break;
 
                 case 8:
 
                     System.out.println("Podaj rozmiar populacji");
-                    int numberOfPopulation = new Scanner(System.in).nextInt();
-                    setNumberOfPopulation(Math.abs(numberOfPopulation));
+                    int numberOfPopulationTmp = getScanner().nextInt();
+                    setNumberOfPopulation(Math.abs(numberOfPopulationTmp));
 
                     break;
 

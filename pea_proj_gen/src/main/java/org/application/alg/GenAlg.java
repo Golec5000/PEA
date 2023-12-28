@@ -22,8 +22,6 @@ public class GenAlg implements AlgInterface {
     private int numberOfVertex;
     private int bestSolution;
     private int tournamentSize;
-    private int crossType;
-    private int mutationType;
 
     private double crossRate;
     private double mutationRate;
@@ -33,7 +31,10 @@ public class GenAlg implements AlgInterface {
     private long bestSolutionTime;
     private long timeLimit;
 
-    public GenAlg(int[][] matrix, int populationSize, double crossRate, double mutationRate, long timeLimit, int tournamentSize, int crossType, int mutationType) {
+    private CrossType crossType;
+    private MutationType mutationType;
+
+    public GenAlg(int[][] matrix, int populationSize, double crossRate, double mutationRate, long timeLimit, int tournamentSize, CrossType crossType, MutationType mutationType) {
 
         setMatrix(matrix);
         setNumberOfVertex(matrix.length);
@@ -116,11 +117,11 @@ public class GenAlg implements AlgInterface {
             // Rozpatrywanie krzyżowania
             for (int j = rotate; j < ((int) (getCrossRate() * (float) getPopulationSize()) + rotate); j += 2) {
                 switch (getCrossType()) {
-                    case 0:
+                    case PMX:
                         population[j] = PMXCross(population[j], population[j + 1]);
                         population[j + 1] = PMXCross(population[j + 1], population[j]);
                         break;
-                    case 1:
+                    case OX:
                         population[j] = OXCross(population[j], population[j + 1]);
                         population[j + 1] = OXCross(population[j + 1], population[j]);
                         break;
@@ -136,10 +137,10 @@ public class GenAlg implements AlgInterface {
                 } while (p1 == p2);
 
                 switch (getMutationType()) {
-                    case 0:
+                    case INVERSION:
                         inversionMutation(p1, p2, population[p3]);
                         break;
-                    case 1:
+                    case SWAP:
                         swapMutation(p1, p2, population[p3]);
                         break;
                 }
@@ -202,33 +203,14 @@ public class GenAlg implements AlgInterface {
     }
 
     private int[] PMXCross(int[] parent1, int[] parent2) {
-        int size = parent1.length;
-        int[] offspring = createFilledTab(size); // Initialize with -1
-
-        // Step 1: Select a random subset of the first parent's path
-        int start = getRand().nextInt(size);
-        int end = getRand().nextInt(size - start) + start;
-
-        // Step 2: Copy this subset directly to the offspring
-        if (end - start >= 0) System.arraycopy(parent1, start, offspring, start, end - start);
-
-        // Step 3: Copy the remaining genes to the offspring in the order they appear in the second parent
-        for (int i = 0; i < size; i++) {
-            if (offspring[i] == -1) {
-                for (int j = 0; j < size; j++) {
-                    int gene = parent2[j];
-                    if (isNotInPath(gene, offspring)) {
-                        offspring[i] = gene;
-                        break;
-                    }
-                }
-            }
-        }
-
-        return offspring;
+        return cross(parent1, parent2, true);
     }
 
     private int[] OXCross(int[] parent1, int[] parent2) {
+        return cross(parent1, parent2, false);
+    }
+
+    private int[] cross(int[] parent1, int[] parent2, boolean isPMX) {
         int size = parent1.length;
         int[] offspring = createFilledTab(size); // Initialize with -1
 
@@ -237,16 +219,34 @@ public class GenAlg implements AlgInterface {
         int end = getRand().nextInt(size - start) + start;
 
         // Step 2: Copy this subset directly to the offspring
-        if (end - start >= 0) System.arraycopy(parent1, start, offspring, start, end - start);
+        System.arraycopy(parent1, start, offspring, start, end - start);
 
         // Step 3: Copy the remaining genes to the offspring in the order they appear in the second parent
-        int current = end;
-        for (int i = end; i < end + size; i++) {
-            int gene = parent2[i % size];
-            if (isNotInPath(gene, offspring)) {
-                offspring[current % size] = gene;
-                current++;
+        if (isPMX) {
+
+            for (int i = 0; i < size; i++) {
+                if (offspring[i] == -1) {
+                    for (int j = 0; j < size; j++) {
+                        int gene = parent2[j];
+                        if (isNotInPath(gene, offspring)) {
+                            offspring[i] = gene;
+                            break;
+                        }
+                    }
+                }
             }
+
+        } else {
+
+            int current = end;
+            for (int i = end; i < end + size; i++) {
+                int gene = parent2[i % size];
+                if (isNotInPath(gene, offspring)) {
+                    offspring[current % size] = gene;
+                    current++;
+                }
+            }
+
         }
 
         return offspring;
