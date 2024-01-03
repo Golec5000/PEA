@@ -10,6 +10,7 @@ import org.application.alg.MutationType;
 import org.application.io.ReadFromFile;
 import org.application.tests.TestingClass;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 @Getter
@@ -43,14 +44,14 @@ public class Menu {
         setMutationRate(0.01f);
 
         setNumberOfPopulation(250);
-        setTournamentSize(5);
+        setTournamentSize(20);
 
         setTimeLimit(120000);
 
         setScanner(new Scanner(System.in));
 
-        setCrossMethod(CrossType.PMX);
-        setMutationMethod(MutationType.INVERSION);
+        setCrossMethod(CrossType.OX);
+        setMutationMethod(MutationType.INSERTION);
 
     }
 
@@ -73,7 +74,7 @@ public class Menu {
 
         sb.append("Obecne ustawienia\n");
         sb.append("Metoda krzyżowania: ").append(getCrossMethod() == CrossType.PMX ? "PMX" : "OX").append("\n");
-        sb.append("Metoda mutacji: ").append(getMutationMethod() == MutationType.INVERSION ? "Inversion" : "Swap").append("\n");
+        sb.append("Metoda mutacji: ").append(getMutationMethod() == MutationType.INSERTION ? "Insertion" : "Swap").append("\n");
         sb.append("Czas stopu: ").append(getTimeLimit() / 1000).append(" s\n");
         sb.append("Procent krzyżowania: ").append(getCrossRate()).append("\n");
         sb.append("Procent mutacji: ").append(getMutationRate()).append("\n");
@@ -81,7 +82,7 @@ public class Menu {
 
         sb.append("Wybór opcji: ");
 
-        System.out.println(sb.toString());
+        System.out.println(sb);
 
     }
 
@@ -92,6 +93,7 @@ public class Menu {
         do {
 
             mainMenuDisplay();
+
             num = getScanner().nextInt();
 
             System.out.println("\n");
@@ -104,7 +106,7 @@ public class Menu {
                 case 1:
 
                     System.out.println("Podaj nazwę pliku do wczytania (bez .atsp)");
-                    String filename = getScanner().nextLine();
+                    String filename = new Scanner(System.in).nextLine();
                     getReadFromFile().read(filename + ".atsp");
 
                     break;
@@ -147,21 +149,21 @@ public class Menu {
                 case 4:
 
                     System.out.println("Wybór metody mutacji");
-                    System.out.println("0 -> Inversion");
+                    System.out.println("0 -> Insertion");
                     System.out.println("1 -> Swap");
 
                     int mutationMethodTmp = getScanner().nextInt();
 
                     switch (mutationMethodTmp) {
                         case 0:
-                            setMutationMethod(MutationType.INVERSION);
+                            setMutationMethod(MutationType.INSERTION);
                             break;
                         case 1:
                             setMutationMethod(MutationType.SWAP);
                             break;
                         default:
                             System.out.println("Brak takiej opcji, algorytm Inversion zostanie wybrany domyślnie");
-                            setMutationMethod(MutationType.INVERSION);
+                            setMutationMethod(MutationType.SWAP);
                             break;
                     }
 
@@ -178,7 +180,13 @@ public class Menu {
                 case 6:
 
                     System.out.println("Podaj procent krzyżowania");
-                    float crossRateTmp = getScanner().nextFloat();
+                    float crossRateTmp;
+                    try {
+                        crossRateTmp = getScanner().nextFloat();
+                    } catch (InputMismatchException e) {
+                        System.out.println("Błędny format: " + e.getMessage());
+                        break;
+                    }
                     setCrossRate(Math.abs(crossRateTmp));
 
                     break;
@@ -186,7 +194,13 @@ public class Menu {
                 case 7:
 
                     System.out.println("Podaj procent mutacji");
-                    float mutationRateTmp = getScanner().nextFloat();
+                    float mutationRateTmp;
+                    try {
+                        mutationRateTmp = getScanner().nextFloat();
+                    } catch (InputMismatchException e) {
+                        System.out.println("Błędny format: " + e.getMessage());
+                        break;
+                    }
                     setMutationRate(Math.abs(mutationRateTmp));
 
                     break;
@@ -210,6 +224,7 @@ public class Menu {
                     System.out.println("Algorytm genetyczny");
                     alg.solve();
                     System.out.println(alg.toString());
+                    System.out.println("\n");
 
                     break;
 
