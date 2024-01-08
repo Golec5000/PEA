@@ -3,10 +3,7 @@ package org.application.alg;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -25,6 +22,8 @@ public class GenAlg implements AlgInterface {
     private int numberOfVertex;
     private int bestSolution;
     private int tournamentSize;
+    private int counter;
+    private int maxGeneration;
 
     private double crossRate;
     private double mutationRate;
@@ -37,7 +36,11 @@ public class GenAlg implements AlgInterface {
     private CrossType crossType;
     private MutationType mutationType;
 
-    public GenAlg(int[][] matrix, int populationSize, double crossRate, double mutationRate, long timeLimit, int tournamentSize, CrossType crossType, MutationType mutationType) {
+    public GenAlg(int[][] matrix, int populationSize,
+                  double crossRate, double mutationRate,
+                  long timeLimit, int tournamentSize,
+                  CrossType crossType, MutationType mutationType,
+                  int maxGeneration) {
 
         setMatrix(matrix);
         setNumberOfVertex(matrix.length);
@@ -50,11 +53,12 @@ public class GenAlg implements AlgInterface {
 
         setMutationRate(mutationRate);
         setTimeLimit(timeLimit);
-        setExecutionTime(0);
-        setMillisActualTime(0);
 
         setCrossType(crossType);
         setMutationType(mutationType);
+
+        setMaxGeneration(maxGeneration);
+        setCounter(0);
 
     }
 
@@ -62,12 +66,11 @@ public class GenAlg implements AlgInterface {
     public void solve() {
 
         int[][] population;
-        int[][] nextPopulation;
+        int[][] nextPopulation = createFilledDoubleTab(getPopulationSize(), getNumberOfVertex() - 1);
+        int[] permutation = createFilledTab(getNumberOfVertex() - 1);
         int[] ratedPopulation;
-        int[] permutation;
 
-        nextPopulation = createFilledDoubleTab(getPopulationSize(), getNumberOfVertex() - 1);
-        permutation = createFilledTab(getNumberOfVertex() - 1);
+        long startTime = System.currentTimeMillis();
 
         population = IntStream.range(0, getPopulationSize())
                 .parallel()
@@ -79,12 +82,13 @@ public class GenAlg implements AlgInterface {
                 .mapToInt(this::calculatePathLength)
                 .toArray();
 
+
         // Ocena populacji i aktualizacja najlepszego rozwiązania po pierwszym pokoleniu
         checkUpdateSolution(ratedPopulation, population);
 
-        setMillisActualTime(System.currentTimeMillis());
+        for (int generation = 1; getCounter() < getMaxGeneration(); generation++) {
 
-        while (getExecutionTime() < getTimeLimit()) {
+            System.out.println(displayPath(generation));
 
             ratedPopulation = Arrays.stream(population)
                     .parallel()
@@ -103,12 +107,12 @@ public class GenAlg implements AlgInterface {
 
                     if (ratedPopulation[index] < result) {
                         result = ratedPopulation[index];
-                        permutation = population[index].clone();
+                        permutation = population[index];
                     }
 
                 }
 
-                nextPopulation[selectLastUnfilled(nextPopulation)] = permutation.clone();
+                nextPopulation[selectLastUnfilled(nextPopulation)] = permutation;
 
             }
 
@@ -122,45 +126,51 @@ public class GenAlg implements AlgInterface {
             // Rozpatrywanie krzyżowania
             for (int j = rotate; j < ((int) (getCrossRate() * (float) getPopulationSize()) + rotate); j += 2) {
 
+                int[] child1 = new int[0];
+                int[] child2 = new int[0];
+
                 switch (getCrossType()) {
 
-                    case PMX:
-                        population[j] = PMXCross(population[j], population[j + 1]);
-                        population[j + 1] = PMXCross(population[j + 1], population[j]);
-                        break;
+                    case PMX -> {
+                        child1 = PMXCross(population[j], population[j + 1]);
+                        child2 = PMXCross(population[j + 1], population[j]);
+                    }
 
-                    case OX:
-                        population[j] = OXCross(population[j], population[j + 1]);
-                        population[j + 1] = OXCross(population[j + 1], population[j]);
-                        break;
+                    case OX -> {
+                        child1 = OXCross(population[j], population[j + 1]);
+                        child2 = OXCross(population[j + 1], population[j]);
+                    }
 
                 }
 
+                population[j] = child1;
+                population[j + 1] = child2;
+
             }
 
-            int p1;
-            int p2;
-            int p3;
+            int index1;
+            int index2;
+            int pathIndex;
 
             //Rozpatrywanie mutacji
             for (int j = 0; j < (int) (getMutationRate() * (float) getPopulationSize()) + 1; j++) {
 
                 do {
 
-                    p1 = getRand().nextInt(getNumberOfVertex() - 1);
-                    p2 = getRand().nextInt(getNumberOfVertex() - 1);
-                    p3 = getRand().nextInt(getPopulationSize());
+                    index1 = getRand().nextInt(getNumberOfVertex() - 2) + 1;
+                    index2 = getRand().nextInt(getNumberOfVertex() - 2) + 1;
+                    pathIndex = getRand().nextInt(getPopulationSize());
 
-                } while (p1 == p2);
+                } while (index1 == index2);
 
                 switch (getMutationType()) {
 
-                    case INSERTION:
-                        insertionMutation(p1, p2, population[p3]);
+                    case SWAP:
+                        swapMutation(index1, index2, population[pathIndex]);
                         break;
 
-                    case SWAP:
-                        swapMutation(p1, p2, population[p3]);
+                    case SCRAMBLE:
+                        scrambleMutation(index1, index2, population[pathIndex]);
                         break;
 
                 }
@@ -176,63 +186,89 @@ public class GenAlg implements AlgInterface {
             //Sprawdzenie czy nie znaleziono lepszego rozwiązania
             checkUpdateSolution(ratedPopulation, population);
 
-            setExecutionTime(System.currentTimeMillis() - getMillisActualTime());
+            setCounter(getCounter() + 1);
 
         }
+
+        System.out.println("\nCzas trwania algorytmu: " + (System.currentTimeMillis() - startTime) + " ms \n");
 
     }
 
     private int[] PMXCross(int[] parent1, int[] parent2) {
-        return cross(parent1, parent2, true);
+        return cross(parent1, parent2, CrossType.PMX);
     }
 
     private int[] OXCross(int[] parent1, int[] parent2) {
-        return cross(parent1, parent2, false);
+        return cross(parent1, parent2, CrossType.OX);
     }
 
-    private int[] cross(int[] parent1, int[] parent2, boolean isPMX) {
+    private int[] cross(int[] parent1, int[] parent2, CrossType crossType) {
 
         int size = parent1.length;
         int[] offspring = createFilledTab(size); // Initialize with -1
 
         // Step 1: Select a random subset of the first parent's path
-        int start = getRand().nextInt(size);
-        int end = getRand().nextInt(size - start) + start;
+        int start;
+        int end;
+
+        do {
+
+            start = getRand().nextInt(size);
+            end = getRand().nextInt(size);
+
+        } while (start == end);
+
+        if (start > end) {
+
+            start ^= end;
+            end ^= start;
+            start ^= end;
+
+        }
 
         // Step 2: Copy this subset directly to the offspring
         System.arraycopy(parent1, start, offspring, start, end - start);
 
-        // Step 3: Copy the remaining genes to the offspring in the order they appear in the second parent
-        if (isPMX) {
 
-            for (int i = 0; i < size; i++) {
-                if (offspring[i] == -1) {
-                    for (int j = 0; j < size; j++) {
-                        int gene = parent2[j];
-                        if (isNotInPath(gene, offspring)) {
-                            offspring[i] = gene;
-                            break;
+        // Step 3: Copy the remaining genes to the offspring in the order they appear in the second parent
+
+        switch (crossType) {
+
+            case PMX:
+
+                for (int i = 0; i < size; i++) {
+                    if (offspring[i] == -1) {
+                        for (int j = 0; j < size; j++) {
+                            int gene = parent2[j];
+                            if (isNotInPath(gene, offspring)) {
+                                offspring[i] = gene;
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-        } else {
+                break;
 
-            int current = end;
-            for (int i = end; i < end + size; i++) {
-                int gene = parent2[i % size];
-                if (isNotInPath(gene, offspring)) {
-                    offspring[current % size] = gene;
-                    current++;
+            case OX:
+
+                int current = end;
+                for (int i = end; i < end + size; i++) {
+                    int gene = parent2[i % size];
+                    if (isNotInPath(gene, offspring)) {
+                        offspring[current % size] = gene;
+                        current++;
+                    }
                 }
-            }
+
+                break;
 
         }
 
         return offspring;
 
     }
+
 
     private void swapMutation(int i, int j, int[] path) {
 
@@ -242,10 +278,7 @@ public class GenAlg implements AlgInterface {
 
     }
 
-    private void insertionMutation(int pos1, int pos2, int[] path) {
-
-        int size = path.length;
-
+    private void scrambleMutation(int pos1, int pos2, int[] path) {
         // Ensure pos1 is before pos2
         if (pos1 > pos2) {
             pos1 ^= pos2;
@@ -253,14 +286,23 @@ public class GenAlg implements AlgInterface {
             pos1 ^= pos2;
         }
 
-        // Remove element at pos2 and shift elements
-        int removedElement = path[pos2];
-        System.arraycopy(path, pos2 + 1, path, pos2, size - pos2 - 1);
+        // Extract the subset from the path
+        int[] subset = Arrays.copyOfRange(path, pos1, pos2);
 
-        // Shift elements to make space at pos1 and insert removed element
-        System.arraycopy(path, pos1, path, pos1 + 1, size - pos1 - 1);
-        path[pos1] = removedElement;
+        // Convert the subset to a list and shuffle it
+        List<Integer> subsetList = Arrays.stream(subset)
+                .boxed()
+                .collect(Collectors.toList());
 
+        Collections.shuffle(subsetList);
+
+        // Convert the shuffled list back to an array
+        subset = subsetList.stream()
+                .mapToInt(i -> i)
+                .toArray();
+
+        // Insert the shuffled subset back into the path
+        System.arraycopy(subset, 0, path, pos1, subset.length);
     }
 
     private int[] creatRandomPath() {
@@ -290,41 +332,49 @@ public class GenAlg implements AlgInterface {
         return IntStream.range(0, tab.length)
                 .filter(i -> tab[i][1] == -1)
                 .findFirst()
-                .orElse(-2);
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono wolnego miejsca w tablicy"));
     }
 
     private int[] createFilledTab(int tabSize) {
-        int[] tab = new int[tabSize];
-        Arrays.fill(tab, -1);
-        return tab;
+        return IntStream.range(0, tabSize)
+                .map(i -> -1)
+                .toArray();
     }
 
     private int[][] createFilledDoubleTab(int populationSize, int graphSize) {
-        int[][] tab = new int[populationSize][graphSize];
-        for (int i = 0; i < populationSize; i++) tab[i] = createFilledTab(graphSize);
-        return tab;
+        return IntStream.range(0, populationSize)
+                .parallel()
+                .mapToObj(i -> createFilledTab(graphSize))
+                .toArray(int[][]::new);
     }
 
     private void checkUpdateSolution(int[] ratedPopulation, int[][] population) {
 
         int bestIndex = IntStream.range(0, ratedPopulation.length)
                 .reduce((i, j) -> ratedPopulation[i] < ratedPopulation[j] ? i : j)
-                .orElse(-1);
+                .orElseThrow(() -> new RuntimeException("Błąd w tablicy"));
 
         if (ratedPopulation[bestIndex] < getBestSolution()) {
 
-            setBestSolutionTime(System.currentTimeMillis() - getMillisActualTime());
             setBestSolution(ratedPopulation[bestIndex]);
             setBestPath(population[bestIndex]);
+            setCounter(0);
 
         }
 
+    }
+
+    private String displayPath(int gen) {
+        return "Generacja " + gen + " Najlepsze rozwiązanie: " + getBestSolution();
     }
 
     @Override
     public String toString() {
         return getBestSolutionTime() +
                 ";" + getBestSolution() +
-                ";" + Arrays.toString(getBestPath()).replace(",", " -");
+                ";" + Arrays.stream(getBestPath())
+                .mapToObj(Integer::toString)
+                .reduce((str1, str2) -> str1 + " - " + str2)
+                .orElseThrow(() -> new RuntimeException("Błąd w wyniku"));
     }
 }

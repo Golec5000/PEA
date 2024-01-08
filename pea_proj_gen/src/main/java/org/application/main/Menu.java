@@ -28,6 +28,7 @@ public class Menu {
 
     private int numberOfPopulation;
     private int tournamentSize;
+    private int maxCounter;
 
     private float crossRate;
     private float mutationRate;
@@ -43,15 +44,17 @@ public class Menu {
         setCrossRate(0.8f);
         setMutationRate(0.01f);
 
-        setNumberOfPopulation(250);
-        setTournamentSize(20);
+        setNumberOfPopulation(5000);
+        setTournamentSize(5);
 
-        setTimeLimit(120000);
+        setTimeLimit(180_000);
 
         setScanner(new Scanner(System.in));
 
-        setCrossMethod(CrossType.OX);
-        setMutationMethod(MutationType.INSERTION);
+        setCrossMethod(CrossType.PMX);
+        setMutationMethod(MutationType.SWAP);
+
+        setMaxCounter(200);
 
     }
 
@@ -63,22 +66,24 @@ public class Menu {
         sb.append("2 -> Wyświelenie wczytanej macierzy\n");
         sb.append("3 -> Wybór metody krzyżowania\n");
         sb.append("4 -> Wybór metody mutacji\n");
-        sb.append("5 -> czas stopu\n");
+        sb.append("5 -> Kryterium stopu\n");
         sb.append("6 -> Procent krzyżowania\n");
         sb.append("7 -> Procent mutacji\n");
         sb.append("8 -> Rozmiar populacji\n");
-        sb.append("9 -> Uruchomienie algorytmu\n");
+        sb.append("9 -> Ilość wierzchołków turniejowych\n");
+        sb.append("10 -> Uruchomienie algorytmu\n");
         sb.append("0 -> Zakończenie programu\n");
 
         sb.append("\n");
 
         sb.append("Obecne ustawienia\n");
         sb.append("Metoda krzyżowania: ").append(getCrossMethod() == CrossType.PMX ? "PMX" : "OX").append("\n");
-        sb.append("Metoda mutacji: ").append(getMutationMethod() == MutationType.INSERTION ? "Insertion" : "Swap").append("\n");
-        sb.append("Czas stopu: ").append(getTimeLimit() / 1000).append(" s\n");
+        sb.append("Metoda mutacji: ").append(getMutationMethod() == MutationType.SCRAMBLE ? "Scramble" : "Swap").append("\n");
+        sb.append("Kryterium stopu: ").append("ilość generacji bez zmian: ").append(getMaxCounter()).append("\n");
         sb.append("Procent krzyżowania: ").append(getCrossRate()).append("\n");
         sb.append("Procent mutacji: ").append(getMutationRate()).append("\n");
         sb.append("Rozmiar populacji: ").append(getNumberOfPopulation()).append("\n");
+        sb.append("Ilość wierzchołków turniejowych: ").append(getTournamentSize()).append("\n");
 
         sb.append("Wybór opcji: ");
 
@@ -149,20 +154,20 @@ public class Menu {
                 case 4:
 
                     System.out.println("Wybór metody mutacji");
-                    System.out.println("0 -> Insertion");
+                    System.out.println("0 -> Scramble");
                     System.out.println("1 -> Swap");
 
                     int mutationMethodTmp = getScanner().nextInt();
 
                     switch (mutationMethodTmp) {
                         case 0:
-                            setMutationMethod(MutationType.INSERTION);
+                            setMutationMethod(MutationType.SCRAMBLE);
                             break;
                         case 1:
                             setMutationMethod(MutationType.SWAP);
                             break;
                         default:
-                            System.out.println("Brak takiej opcji, algorytm Inversion zostanie wybrany domyślnie");
+                            System.out.println("Brak takiej opcji, algorytm Swap zostanie wybrany domyślnie");
                             setMutationMethod(MutationType.SWAP);
                             break;
                     }
@@ -171,9 +176,14 @@ public class Menu {
 
                 case 5:
 
-                    System.out.println("Podaj czas stopu w sekundach");
-                    long timeLimitTmp = getScanner().nextLong();
-                    setTimeLimit(Math.abs(timeLimitTmp * 1000));
+                    System.out.println("Podaj ilość generacji bez zmian");
+                    int maxCounterTmp;
+
+                    do {
+                        maxCounterTmp = getScanner().nextInt();
+                    } while (maxCounterTmp == 0);
+
+                    setMaxCounter(Math.abs(maxCounterTmp));
 
                     break;
 
@@ -215,12 +225,25 @@ public class Menu {
 
                 case 9:
 
+                        System.out.println("Podaj ilość wierzchołków turniejowych");
+                        int tournamentSizeTmp = getScanner().nextInt();
+                        setTournamentSize(Math.abs(tournamentSizeTmp));
+
+                        break;
+
+                case 10:
+
                     if (getReadFromFile().getMatrix() == null) {
                         System.out.println("Brak wczytanej macierzy");
                         break;
                     }
 
-                    setAlg(new GenAlg(getReadFromFile().getMatrix(), getNumberOfPopulation(), getCrossRate(), getMutationRate(), getTimeLimit(), getTournamentSize(), getCrossMethod(), getMutationMethod()));
+                    setAlg(new GenAlg(getReadFromFile().getMatrix(), getNumberOfPopulation(),
+                            getCrossRate(), getMutationRate(),
+                            getTimeLimit(), getTournamentSize(),
+                            getCrossMethod(), getMutationMethod(),
+                            getMaxCounter()));
+
                     System.out.println("Algorytm genetyczny");
                     alg.solve();
                     System.out.println(alg.toString());
