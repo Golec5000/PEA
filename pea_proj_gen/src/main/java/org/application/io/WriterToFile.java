@@ -6,9 +6,9 @@ import java.io.IOException;
 
 public class WriterToFile {
 
-    public void save(String path, String message) {
+    public void save(String path, String message, boolean append) {
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, append))) {
 
             writer.write(message);
             writer.newLine();

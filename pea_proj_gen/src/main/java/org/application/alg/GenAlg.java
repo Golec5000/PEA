@@ -14,10 +14,11 @@ public class GenAlg implements AlgInterface {
 
     private Random rand = new Random();
 
+    private TreeMap<Integer, Integer> bestSolutionMap = new TreeMap<>();
+
     private int[][] matrix;
 
     private int[] bestPath;
-
     private int populationSize;
     private int numberOfVertex;
     private int bestSolution;
@@ -28,19 +29,16 @@ public class GenAlg implements AlgInterface {
     private double crossRate;
     private double mutationRate;
 
-    private long millisActualTime;
-    private long executionTime;
-    private long bestSolutionTime;
-    private long timeLimit;
-
     private CrossType crossType;
     private MutationType mutationType;
 
-    public GenAlg(int[][] matrix, int populationSize,
-                  double crossRate, double mutationRate,
-                  long timeLimit, int tournamentSize,
-                  CrossType crossType, MutationType mutationType,
-                  int maxGeneration) {
+    private boolean testing;
+
+    public GenAlg(int[][] matrix, int populationSize
+            , double crossRate, double mutationRate
+            , int tournamentSize, CrossType crossType
+            , MutationType mutationType, int maxGeneration
+            , boolean testing) {
 
         setMatrix(matrix);
         setNumberOfVertex(matrix.length);
@@ -52,7 +50,6 @@ public class GenAlg implements AlgInterface {
         setCrossRate(crossRate);
 
         setMutationRate(mutationRate);
-        setTimeLimit(timeLimit);
 
         setCrossType(crossType);
         setMutationType(mutationType);
@@ -60,6 +57,7 @@ public class GenAlg implements AlgInterface {
         setMaxGeneration(maxGeneration);
         setCounter(0);
 
+        setTesting(testing);
     }
 
     @Override
@@ -88,7 +86,7 @@ public class GenAlg implements AlgInterface {
 
         for (int generation = 1; getCounter() < getMaxGeneration(); generation++) {
 
-            System.out.println(displayPath(generation));
+            if(isTesting()) displayPath(generation);
 
             ratedPopulation = Arrays.stream(population)
                     .parallel()
@@ -190,7 +188,7 @@ public class GenAlg implements AlgInterface {
 
         }
 
-        System.out.println("\nCzas trwania algorytmu: " + (System.currentTimeMillis() - startTime) + " ms \n");
+        System.out.println("Czas trwania algorytmu: " + (System.currentTimeMillis() - startTime) + " ms");
 
     }
 
@@ -364,14 +362,13 @@ public class GenAlg implements AlgInterface {
 
     }
 
-    private String displayPath(int gen) {
-        return "Generacja " + gen + " Najlepsze rozwiązanie: " + getBestSolution();
+    private void displayPath(int gen) {
+          getBestSolutionMap().put(gen, getBestSolution());
     }
 
     @Override
     public String toString() {
-        return getBestSolutionTime() +
-                ";" + getBestSolution() +
+        return getBestSolution() +
                 ";" + Arrays.stream(getBestPath())
                 .mapToObj(Integer::toString)
                 .reduce((str1, str2) -> str1 + " - " + str2)

@@ -33,8 +33,6 @@ public class Menu {
     private float crossRate;
     private float mutationRate;
 
-    private long timeLimit;
-
     public Menu() {
 
         setReadFromFile(new ReadFromFile());
@@ -46,8 +44,6 @@ public class Menu {
 
         setNumberOfPopulation(5000);
         setTournamentSize(5);
-
-        setTimeLimit(180_000);
 
         setScanner(new Scanner(System.in));
 
@@ -225,11 +221,11 @@ public class Menu {
 
                 case 9:
 
-                        System.out.println("Podaj ilość wierzchołków turniejowych");
-                        int tournamentSizeTmp = getScanner().nextInt();
-                        setTournamentSize(Math.abs(tournamentSizeTmp));
+                    System.out.println("Podaj ilość wierzchołków turniejowych");
+                    int tournamentSizeTmp = getScanner().nextInt();
+                    setTournamentSize(Math.abs(tournamentSizeTmp));
 
-                        break;
+                    break;
 
                 case 10:
 
@@ -238,17 +234,21 @@ public class Menu {
                         break;
                     }
 
-                    setAlg(new GenAlg(getReadFromFile().getMatrix(), getNumberOfPopulation(),
-                            getCrossRate(), getMutationRate(),
-                            getTimeLimit(), getTournamentSize(),
-                            getCrossMethod(), getMutationMethod(),
-                            getMaxCounter()));
+                    setAlg(new GenAlg(getReadFromFile().getMatrix(), getNumberOfPopulation()
+                            , getCrossRate(), getMutationRate()
+                            , getTournamentSize(), getCrossMethod()
+                            , getMutationMethod(), getMaxCounter()
+                            , false));
 
                     System.out.println("Algorytm genetyczny");
                     alg.solve();
                     System.out.println(alg.toString());
                     System.out.println("\n");
 
+                    break;
+
+                case 100:
+                    testingClass.testFile47();
                     break;
 
                 default:
