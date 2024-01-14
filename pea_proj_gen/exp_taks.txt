@@ -1,7 +1,7 @@
 plan eksperymentu
 
-1. 5000 -> ox/swap, ox/scramble , pmx/swap, pmx/scramble
+1. 500 -> ox/swap, ox/scramble , pmx/swap, pmx/scramble
 
-2. 10000 -> ox/swap, ox/scramble , pmx/swap, pmx/scramble
+2. 1000 -> ox/swap, ox/scramble , pmx/swap, pmx/scramble
 
-3. 15000 -> ox/swap, ox/scramble , pmx/swap, pmx/scramble
+3. 2000 -> ox/swap, ox/scramble , pmx/swap, pmx/scramble

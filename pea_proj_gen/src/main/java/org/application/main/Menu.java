@@ -237,8 +237,7 @@ public class Menu {
                     setAlg(new GenAlg(getReadFromFile().getMatrix(), getNumberOfPopulation()
                             , getCrossRate(), getMutationRate()
                             , getTournamentSize(), getCrossMethod()
-                            , getMutationMethod(), getMaxCounter()
-                            , false));
+                            , getMutationMethod(), getMaxCounter()));
 
                     System.out.println("Algorytm genetyczny");
                     alg.solve();
@@ -249,6 +248,22 @@ public class Menu {
 
                 case 100:
                     testingClass.testFile47();
+                    break;
+
+                case 101:
+                    testingClass.testFile170();
+                    break;
+
+                case 102:
+                    testingClass.testFile403();
+                    break;
+
+                case 103:
+                    testingClass.testMutationRatio();
+                    break;
+
+                case 104:
+                    testingClass.testCrossRatio();
                     break;
 
                 default:

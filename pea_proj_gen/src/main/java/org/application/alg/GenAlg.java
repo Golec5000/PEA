@@ -19,6 +19,7 @@ public class GenAlg implements AlgInterface {
     private int[][] matrix;
 
     private int[] bestPath;
+
     private int populationSize;
     private int numberOfVertex;
     private int bestSolution;
@@ -32,13 +33,10 @@ public class GenAlg implements AlgInterface {
     private CrossType crossType;
     private MutationType mutationType;
 
-    private boolean testing;
-
     public GenAlg(int[][] matrix, int populationSize
             , double crossRate, double mutationRate
             , int tournamentSize, CrossType crossType
-            , MutationType mutationType, int maxGeneration
-            , boolean testing) {
+            , MutationType mutationType, int maxGeneration) {
 
         setMatrix(matrix);
         setNumberOfVertex(matrix.length);
@@ -56,49 +54,47 @@ public class GenAlg implements AlgInterface {
 
         setMaxGeneration(maxGeneration);
         setCounter(0);
-
-        setTesting(testing);
     }
 
     @Override
     public void solve() {
 
+        // Initialize the population and the rated population
         int[][] population;
         int[][] nextPopulation = createFilledDoubleTab(getPopulationSize(), getNumberOfVertex() - 1);
         int[] permutation = createFilledTab(getNumberOfVertex() - 1);
         int[] ratedPopulation;
 
+        // Record the start time for performance measurement
         long startTime = System.currentTimeMillis();
 
+        // Generate the initial population
         population = IntStream.range(0, getPopulationSize())
                 .parallel()
                 .mapToObj(i -> creatRandomPath())
                 .toArray(int[][]::new);
 
+        // Evaluate the initial population
         ratedPopulation = Arrays.stream(population)
                 .parallel()
                 .mapToInt(this::calculatePathLength)
                 .toArray();
 
-
-        // Ocena populacji i aktualizacja najlepszego rozwiązania po pierwszym pokoleniu
+        // Check and update the best solution found so far
         checkUpdateSolution(ratedPopulation, population);
 
-        for (int generation = 1; getCounter() < getMaxGeneration(); generation++) {
+        // Start the main loop of the genetic algorithm
+        for (int generation = 1; generation <= getMaxGeneration(); generation++) {
 
-            if(isTesting()) displayPath(generation);
+            // Record the current generation
+            getGeneration(generation);
 
-            ratedPopulation = Arrays.stream(population)
-                    .parallel()
-                    .mapToInt(this::calculatePathLength)
-                    .toArray();
-
-            // Tworzenie nowej populacji na drodze selekcji
+            // Perform selection to create a new population
             for (int j = 0; j < getPopulationSize(); j++) {
 
                 int result = Integer.MAX_VALUE;
 
-                // Organizacja turnieju
+                // Perform a tournament for selection
                 for (int k = 0; k < getTournamentSize(); k++) {
 
                     int index = getRand().nextInt(getPopulationSize());
@@ -110,23 +106,28 @@ public class GenAlg implements AlgInterface {
 
                 }
 
+                // Add the winner of the tournament to the new population
                 nextPopulation[selectLastUnfilled(nextPopulation)] = permutation;
 
             }
 
-            // Podmiana pokoleń
+            // Replace the old population with the new one
             population = nextPopulation;
             nextPopulation = createFilledDoubleTab(getPopulationSize(), getNumberOfVertex() - 1);
 
+            // Determine the number of individuals that will undergo crossover
             int rotate = getPopulationSize() - (int) (getCrossRate() * (float) getPopulationSize());
+
+            // Randomly select a point in the population up to the number of individuals that will not be crossed
             rotate = getRand().nextInt(rotate);
 
-            // Rozpatrywanie krzyżowania
+            // Perform crossover
             for (int j = rotate; j < ((int) (getCrossRate() * (float) getPopulationSize()) + rotate); j += 2) {
 
                 int[] child1 = new int[0];
                 int[] child2 = new int[0];
 
+                // Perform the appropriate type of crossover
                 switch (getCrossType()) {
 
                     case PMX -> {
@@ -141,17 +142,18 @@ public class GenAlg implements AlgInterface {
 
                 }
 
+                // Replace the parents with the offspring
                 population[j] = child1;
                 population[j + 1] = child2;
 
             }
 
-            int index1;
-            int index2;
-            int pathIndex;
-
-            //Rozpatrywanie mutacji
+            // Perform mutation
             for (int j = 0; j < (int) (getMutationRate() * (float) getPopulationSize()) + 1; j++) {
+
+                int index1;
+                int index2;
+                int pathIndex;
 
                 do {
 
@@ -161,6 +163,7 @@ public class GenAlg implements AlgInterface {
 
                 } while (index1 == index2);
 
+                // Perform the appropriate type of mutation
                 switch (getMutationType()) {
 
                     case SWAP:
@@ -175,19 +178,18 @@ public class GenAlg implements AlgInterface {
 
             }
 
-            // Ocena populacji i aktualizacja najlepszego rozwiązania po powtaniu nowego pokolenia i mutacji
+            // Evaluate the new population
             ratedPopulation = Arrays.stream(population)
                     .parallel()
                     .mapToInt(this::calculatePathLength)
                     .toArray();
 
-            //Sprawdzenie czy nie znaleziono lepszego rozwiązania
+            // Check and update the best solution found so far
             checkUpdateSolution(ratedPopulation, population);
-
-            setCounter(getCounter() + 1);
 
         }
 
+        // Print the total running time of the algorithm
         System.out.println("Czas trwania algorytmu: " + (System.currentTimeMillis() - startTime) + " ms");
 
     }
@@ -356,13 +358,12 @@ public class GenAlg implements AlgInterface {
 
             setBestSolution(ratedPopulation[bestIndex]);
             setBestPath(population[bestIndex]);
-            setCounter(0);
 
         }
 
     }
 
-    private void displayPath(int gen) {
+    private void getGeneration(int gen) {
           getBestSolutionMap().put(gen, getBestSolution());
     }
 
