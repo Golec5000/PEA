@@ -145,7 +145,22 @@ public class TestingClass {
 
             System.out.println("Test nr: " + i + "/" + iterations);
 
-            GenAlg genAlg = new GenAlg(matrix, populationSize, crossoverRate, mutationRate, 5, crossType, mutationType, maxGenerations);
+//            GenAlg genAlg = new GenAlg(matrix, populationSize, crossoverRate, mutationRate, 5, crossType, mutationType, maxGenerations);
+
+            GenAlg genAlg = GenAlg.builder()
+                    .matrix(matrix)
+                    .numberOfVertex(matrix.length)
+                    .populationSize(populationSize)
+                    .crossRate(crossoverRate)
+                    .mutationRate(mutationRate)
+                    .tournamentSize(5)
+                    .crossType(crossType)
+                    .mutationType(mutationType)
+                    .maxGeneration(maxGenerations)
+                    .bestSolution(Integer.MAX_VALUE)
+                    .counter(0)
+                    .build();
+
             genAlg.solve();
 
             if (genAlg.getBestSolutionMap().lastEntry().getValue() < bestCost) {

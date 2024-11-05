@@ -1,12 +1,8 @@
 package org.application.main;
 
-
 import lombok.Getter;
 import lombok.Setter;
-import org.application.alg.AlgInterface;
-import org.application.alg.CrossType;
-import org.application.alg.GenAlg;
-import org.application.alg.MutationType;
+import org.application.alg.*;
 import org.application.io.ReadFromFile;
 import org.application.tests.TestingClass;
 
@@ -19,7 +15,7 @@ public class Menu {
 
     private ReadFromFile readFromFile;
     private AlgInterface alg;
-    private TestingClass testingClass;
+//    private TestingClass testingClass;
 
     private Scanner scanner;
 
@@ -29,6 +25,7 @@ public class Menu {
     private int numberOfPopulation;
     private int tournamentSize;
     private int maxCounter;
+    private int numThreads;
 
     private float crossRate;
     private float mutationRate;
@@ -37,7 +34,7 @@ public class Menu {
 
         setReadFromFile(new ReadFromFile());
         setAlg(null);
-        setTestingClass(new TestingClass());
+//        setTestingClass(new TestingClass());
 
         setCrossRate(0.8f);
         setMutationRate(0.01f);
@@ -50,7 +47,8 @@ public class Menu {
         setCrossMethod(CrossType.PMX);
         setMutationMethod(MutationType.SWAP);
 
-        setMaxCounter(200);
+        setMaxCounter(2000);
+        setNumThreads(2); // Default number of threads
 
     }
 
@@ -67,7 +65,9 @@ public class Menu {
         sb.append("7 -> Procent mutacji\n");
         sb.append("8 -> Rozmiar populacji\n");
         sb.append("9 -> Ilość wierzchołków turniejowych\n");
-        sb.append("10 -> Uruchomienie algorytmu\n");
+        sb.append("10 -> Ilość wątków\n");
+        sb.append("11 -> Uruchomienie algorytmu wielowątkowego\n");
+        sb.append("12 -> Uruchomienie algorytmu sekwencyjnego\n");
         sb.append("0 -> Zakończenie programu\n");
 
         sb.append("\n");
@@ -75,11 +75,12 @@ public class Menu {
         sb.append("Obecne ustawienia\n");
         sb.append("Metoda krzyżowania: ").append(getCrossMethod() == CrossType.PMX ? "PMX" : "OX").append("\n");
         sb.append("Metoda mutacji: ").append(getMutationMethod() == MutationType.SCRAMBLE ? "Scramble" : "Swap").append("\n");
-        sb.append("Kryterium stopu: ").append("ilość generacji bez zmian: ").append(getMaxCounter()).append("\n");
+        sb.append("Kryterium stopu: ").append("ilość generacji: ").append(getMaxCounter()).append("\n");
         sb.append("Procent krzyżowania: ").append(getCrossRate()).append("\n");
         sb.append("Procent mutacji: ").append(getMutationRate()).append("\n");
         sb.append("Rozmiar populacji: ").append(getNumberOfPopulation()).append("\n");
         sb.append("Ilość wierzchołków turniejowych: ").append(getTournamentSize()).append("\n");
+        sb.append("Ilość wątków: ").append(getNumThreads()).append("\n");
 
         sb.append("Wybór opcji: ");
 
@@ -229,42 +230,92 @@ public class Menu {
 
                 case 10:
 
+                    System.out.println("Podaj ilość wątków");
+                    int numThreadsTmp = getScanner().nextInt();
+                    setNumThreads(Math.abs(numThreadsTmp));
+
+                    break;
+
+                case 11:
+
                     if (getReadFromFile().getMatrix() == null) {
                         System.out.println("Brak wczytanej macierzy");
                         break;
                     }
 
-                    setAlg(new GenAlg(getReadFromFile().getMatrix(), getNumberOfPopulation()
-                            , getCrossRate(), getMutationRate()
-                            , getTournamentSize(), getCrossMethod()
-                            , getMutationMethod(), getMaxCounter()));
+                    AlgInterface genAlgThreads = GenAlgThreads.builder()
+                            .matrix(getReadFromFile().getMatrix())
+                            .numberOfVertex(getReadFromFile().getMatrix().length)
+                            .crossRate(getCrossRate())
+                            .mutationRate(getMutationRate())
+                            .tournamentSize(getTournamentSize())
+                            .crossType(getCrossMethod())
+                            .mutationType(getMutationMethod())
+                            .maxGeneration(getMaxCounter())
+                            .bestSolution(Integer.MAX_VALUE)
+                            .counter(0)
+                            .populationSize(getNumberOfPopulation())
+                            .numThreads(getNumThreads())
+                            .build();
 
-                    System.out.println("Algorytm genetyczny");
+                    setAlg(genAlgThreads);
+
+                    System.out.println("Algorytm genetyczny - wielowątkowy");
                     alg.solve();
                     System.out.println(alg.toString());
                     System.out.println("\n");
 
                     break;
 
-                case 100:
-                    testingClass.testFile47();
+                case 12:
+
+                    if (getReadFromFile().getMatrix() == null) {
+                        System.out.println("Brak wczytanej macierzy");
+                        break;
+                    }
+
+                    AlgInterface genAlgSeq = GenAlg.builder()
+                            .matrix(getReadFromFile().getMatrix())
+                            .numberOfVertex(getReadFromFile().getMatrix().length)
+                            .crossRate(getCrossRate())
+                            .mutationRate(getMutationRate())
+                            .tournamentSize(getTournamentSize())
+                            .crossType(getCrossMethod())
+                            .mutationType(getMutationMethod())
+                            .maxGeneration(getMaxCounter())
+                            .bestSolution(Integer.MAX_VALUE)
+                            .counter(0)
+                            .populationSize(getNumberOfPopulation())
+                            .build();
+
+                    setAlg(genAlgSeq);
+
+                    System.out.println("Algorytm genetyczny - sekwencyjny");
+                    alg.solve();
+                    System.out.println(alg.toString());
+                    System.out.println("\n");
+
                     break;
 
-                case 101:
-                    testingClass.testFile170();
-                    break;
-
-                case 102:
-                    testingClass.testFile403();
-                    break;
-
-                case 103:
-                    testingClass.testMutationRatio();
-                    break;
-
-                case 104:
-                    testingClass.testCrossRatio();
-                    break;
+//                case 100:
+//                    testingClass.testFile47();
+//                    break;
+//
+//                case 101:
+//                    testingClass.testFile170();
+//                    break;
+//
+//                case 102:
+//                    testingClass.testFile403();
+//                    break;
+//
+//                case 103:
+//                    testingClass.testMutationRatio();
+//                    break;
+//
+//                case 104:
+//                    testingClass.testCrossRatio();
+//                    break;
 
                 default:
                     System.out.println("Brak takiej opcji");
@@ -275,8 +326,4 @@ public class Menu {
         } while (num != 0);
 
     }
-
-
 }
-
-
