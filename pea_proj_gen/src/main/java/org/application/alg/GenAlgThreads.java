@@ -37,63 +37,73 @@ public class GenAlgThreads implements AlgInterface {
 
     private ExecutorService executor;
 
+    private long sequenceTime = 0;
+    private long parallelTime = 0;
+
     @Override
     public void solve() {
 
         try {
+
+            long startTimeSequence1 = System.currentTimeMillis();
             executor = Executors.newFixedThreadPool(numThreads);
 
             bestSolutionMap = new TreeMap<>();
 
             // Podział populacji na chunki
-
             int[] chunkStarts = new int[numThreads];
             int[] chunkEnds = new int[numThreads];
 
             int chunkSize = populationSize / numThreads;
             int remainder = populationSize % numThreads;
 
-            System.out.println("Chunk size: " + chunkSize);
-            System.out.println("Remainder: " + remainder);
-
             for (int i = 0; i < numThreads; i++) {
                 chunkStarts[i] = i * chunkSize + Math.min(i, remainder);
                 chunkEnds[i] = (i + 1) * chunkSize + Math.min(i + 1, remainder);
             }
 
-            System.out.println("Chunk starts: " + Arrays.toString(chunkStarts));
-            System.out.println("Chunk ends: " + Arrays.toString(chunkEnds));
-
             // Inicjalizacja populacji
-            long startTime = System.currentTimeMillis();
-
             int[][] population = IntStream.range(0, getPopulationSize())
                     .mapToObj(i -> GenAlgHelper.creatRandomPath(getNumberOfVertex()))
                     .toArray(int[][]::new);
 
             int[][] nextPopulation = GenAlgHelper.createFilledDoubleTab(getPopulationSize(), getNumberOfVertex() - 1);
 
+            sequenceTime = (System.currentTimeMillis() - startTimeSequence1);
+
             // Ewaluacja populacji
 
             int[] ratedPopulation = new int[populationSize];
 
+            long startTimeParaell1 = System.currentTimeMillis();
+
             parallelEvaluate(population, ratedPopulation, chunkStarts, chunkEnds, numThreads);
+
+            parallelTime += (System.currentTimeMillis() - startTimeParaell1);
 
             checkUpdateSolution(ratedPopulation, population);
 
             // Główna pętla algorytmu
             for (int generation = 1; generation <= getMaxGeneration(); generation++) {
 
-                // ... kod zapisujący generację
+                // Kod zapisujący generację
                 getGeneration(generation);
+
+                startTimeParaell1 = System.currentTimeMillis();
 
                 // Równoległa selekcja
                 parallelSelection(population, ratedPopulation, nextPopulation, chunkStarts, chunkEnds, numThreads);
 
-                synchronized (this) { //todo sprawdzić czy to jest potrzebne
+                parallelTime += (System.currentTimeMillis() - startTimeParaell1);
+
+                synchronized (this) {
+                    startTimeSequence1 = System.currentTimeMillis();
                     population = nextPopulation;
                     nextPopulation = GenAlgHelper.createFilledDoubleTab(getPopulationSize(), getNumberOfVertex() - 1);
+                    sequenceTime += (System.currentTimeMillis() - startTimeSequence1);
                 }
+
+                startTimeParaell1 = System.currentTimeMillis();
 
 //                // Krzyżowanie
                 parallelCrossover(population, numThreads, getPopulationSize() / 2, IntStream.range(0, getPopulationSize() / 2).boxed().collect(Collectors.toList()));
@@ -106,14 +116,17 @@ public class GenAlgThreads implements AlgInterface {
 //                // Ewaluacja nowej populacji
                 parallelEvaluate(population, ratedPopulation, chunkStarts, chunkEnds, numThreads);
 
+                parallelTime += (System.currentTimeMillis() - startTimeParaell1);
+
+
 //                // Aktualizacja najlepszego rozwiązania
                 checkUpdateSolution(ratedPopulation, population);
 
             }
 
-            long endTime = System.currentTimeMillis() - startTime;
 
-            System.out.println("Czas trwania algorytmu: " + GenAlgHelper.formatTime(endTime));
+            System.out.println("Czas trwania algorytmu (część sekwencyjna): " + GenAlgHelper.formatTime(sequenceTime));
+            System.out.println("Czas trwania algorytmu (część wielowątkowa): " + GenAlgHelper.formatTime(parallelTime));
 
             executor.shutdownNow();
 
@@ -123,9 +136,12 @@ public class GenAlgThreads implements AlgInterface {
     }
 
     private synchronized void checkUpdateSolution(int[] ratedPopulation, int[][] population) {
+
+        long startTimeSequence1 = System.currentTimeMillis();
         int bestIndex = IntStream.range(0, ratedPopulation.length)
                 .reduce((i, j) -> ratedPopulation[i] < ratedPopulation[j] ? i : j)
                 .orElseThrow(() -> new RuntimeException("Błąd w tablicy"));
+        sequenceTime += (System.currentTimeMillis() - startTimeSequence1);
 
         if (ratedPopulation[bestIndex] < getBestSolution()) {
             setBestSolution(ratedPopulation[bestIndex]);
@@ -158,14 +174,8 @@ public class GenAlgThreads implements AlgInterface {
             int end = chunkEnds[i];
 
             evaluationTasks.add(() -> {
-                try {
-                    for (int j = start; j < end; j++) {
-                        ratedPopulation[j] = GenAlgHelper.calculatePathLength(population[j], getMatrix());
-                    }
-                } catch (Exception e) {
-                    System.err.println("Error in thread " + Thread.currentThread().getName() + " for range " + start + " to " + end);
-                    System.out.println("Error: " + Arrays.toString(e.getStackTrace()));
-                    throw e;
+                for (int j = start; j < end; j++) {
+                    ratedPopulation[j] = GenAlgHelper.calculatePathLength(population[j], getMatrix());
                 }
                 return null;
             });
@@ -174,12 +184,7 @@ public class GenAlgThreads implements AlgInterface {
         List<Future<Void>> futures = executor.invokeAll(evaluationTasks);
 
         for (Future<Void> future : futures) {
-            try {
-                future.get();
-            } catch (ExecutionException e) {
-                System.err.println("Task execution failed: " + e.getMessage());
-                throw e;
-            }
+            future.get();
         }
 
     }
@@ -240,7 +245,6 @@ public class GenAlgThreads implements AlgInterface {
         for (List<Integer> chunk : crossoverChunks) {
             crossoverTasks.add(() -> {
                 for (int idx : chunk) {
-
                     int[] child1 = new int[numberOfVertex - 1];
                     int[] child2 = new int[numberOfVertex - 1];
 
@@ -255,8 +259,10 @@ public class GenAlgThreads implements AlgInterface {
                         }
                     }
 
-                    population[idx] = child1;
-                    population[(idx + 1) % populationSize] = child2;
+                    synchronized (population) {
+                        population[idx] = child1;
+                        population[(idx + 1) % populationSize] = child2;
+                    }
                 }
                 return null;
             });
@@ -267,12 +273,10 @@ public class GenAlgThreads implements AlgInterface {
         for (Future<Void> future : futures) {
             future.get();
         }
-
     }
 
     private void parallelMutation(int[][] population, int numThreads, int numMutations)
             throws InterruptedException, ExecutionException {
-
 
         List<Callable<Void>> mutationTasks = new ArrayList<>();
 
@@ -291,13 +295,15 @@ public class GenAlgThreads implements AlgInterface {
                         pathIndex = localRand.nextInt(populationSize);
                     } while (index1 == index2);
 
-                    switch (getMutationType()) {
-                        case SWAP:
-                            GenAlgHelper.swapMutation(index1, index2, population[pathIndex]);
-                            break;
-                        case SCRAMBLE:
-                            GenAlgHelper.scrambleMutation(index1, index2, population[pathIndex]);
-                            break;
+                    synchronized (population) {
+                        switch (getMutationType()) {
+                            case SWAP:
+                                GenAlgHelper.swapMutation(index1, index2, population[pathIndex]);
+                                break;
+                            case SCRAMBLE:
+                                GenAlgHelper.scrambleMutation(index1, index2, population[pathIndex]);
+                                break;
+                        }
                     }
                 }
                 return null;
@@ -309,6 +315,5 @@ public class GenAlgThreads implements AlgInterface {
         for (Future<Void> future : futures) {
             future.get();
         }
-
     }
 }

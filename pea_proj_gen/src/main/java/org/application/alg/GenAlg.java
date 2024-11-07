@@ -4,9 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.security.SecureRandom;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
@@ -15,7 +13,7 @@ import java.util.stream.IntStream;
 @Builder
 public class GenAlg implements AlgInterface {
 
-    private SecureRandom rand;
+    private Random rand;
 
     private TreeMap<Integer, Integer> bestSolutionMap;
 
@@ -36,6 +34,8 @@ public class GenAlg implements AlgInterface {
     private CrossType crossType;
     private MutationType mutationType;
 
+    private long time = 0;
+
     @Override
     public void solve() {
 
@@ -45,7 +45,7 @@ public class GenAlg implements AlgInterface {
         int[] permutation = GenAlgHelper.createFilledTab(getNumberOfVertex() - 1);
         int[] ratedPopulation;
 
-        rand = new SecureRandom();
+        rand = new Random();
         bestSolutionMap = new TreeMap<>();
 
         // Record the start time for performance measurement
@@ -171,9 +171,9 @@ public class GenAlg implements AlgInterface {
 
         // Print the total running time of the algorithm
 
-        long endTime = System.currentTimeMillis() - startTime;
+        time = System.currentTimeMillis() - startTime;
 
-        System.out.println("Czas trwania algorytmu: " + GenAlgHelper.formatTime(endTime));
+        System.out.println("Czas trwania algorytmu: " + GenAlgHelper.formatTime(time));
 
     }
 
@@ -187,6 +187,7 @@ public class GenAlg implements AlgInterface {
         if (ratedPopulation[bestIndex] < getBestSolution()) {
             setBestSolution(ratedPopulation[bestIndex]);
             setBestPath(population[bestIndex]);
+            System.out.println("Najlepsze rozwiązanie: " + getBestSolution());
         }
     }
 

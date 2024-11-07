@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.application.alg.*;
 import org.application.io.ReadFromFile;
-import org.application.tests.TestingClass;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
