@@ -4,7 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.TreeMap;
 import java.util.stream.IntStream;
 
 
@@ -69,6 +71,8 @@ public class GenAlg implements AlgInterface {
 
             // Record the current generation
             getGeneration(generation);
+
+            if (generation % 200 == 0) System.out.println("Generacja: " + generation);
 
             // Perform selection to create a new population
             for (int j = 0; j < getPopulationSize(); j++) {
@@ -173,7 +177,7 @@ public class GenAlg implements AlgInterface {
 
         time = System.currentTimeMillis() - startTime;
 
-        System.out.println("Czas trwania algorytmu: " + GenAlgHelper.formatTime(time));
+//        System.out.println("Czas trwania algorytmu: " + GenAlgHelper.formatTime(time));
 
     }
 
@@ -187,7 +191,7 @@ public class GenAlg implements AlgInterface {
         if (ratedPopulation[bestIndex] < getBestSolution()) {
             setBestSolution(ratedPopulation[bestIndex]);
             setBestPath(population[bestIndex]);
-            System.out.println("Najlepsze rozwiązanie: " + getBestSolution());
+//            System.out.println("Najlepsze rozwiązanie: " + getBestSolution());
         }
     }
 

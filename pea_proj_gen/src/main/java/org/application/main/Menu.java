@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.application.alg.*;
 import org.application.io.ReadFromFile;
+import org.application.tests.TestingClassSequence;
+import org.application.tests.TestingClassThreads;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -14,7 +16,8 @@ public class Menu {
 
     private ReadFromFile readFromFile;
     private AlgInterface alg;
-//    private TestingClass testingClass;
+    private TestingClassSequence testingClass;
+    private TestingClassThreads testingClassThreads;
 
     private Scanner scanner;
 
@@ -33,7 +36,8 @@ public class Menu {
 
         setReadFromFile(new ReadFromFile());
         setAlg(null);
-//        setTestingClass(new TestingClass());
+        setTestingClass(new TestingClassSequence());
+        setTestingClassThreads(new TestingClassThreads());
 
         setCrossRate(0.8f);
         setMutationRate(0.01f);
@@ -296,25 +300,53 @@ public class Menu {
 
                     break;
 
-//                case 100:
-//                    testingClass.testFile47();
-//                    break;
-//
-//                case 101:
-//                    testingClass.testFile170();
-//                    break;
-//
-//                case 102:
-//                    testingClass.testFile403();
-//                    break;
-//
-//                case 103:
-//                    testingClass.testMutationRatio();
-//                    break;
-//
-//                case 104:
-//                    testingClass.testCrossRatio();
-//                    break;
+                case 100: //TODO: K
+                    testingClass.testFile47OX();
+                    break;
+
+                case 101://TODO: K
+                    testingClass.testFile170OX();
+                    break;
+
+                case 102://TODO: K
+                    testingClass.testFile403OX();
+                    break;
+
+                case 103://TODO: K
+                    testingClass.testFile47PMX();
+                    break;
+
+                case 104://TODO: D
+                    testingClass.testFile170PMX();
+                    break;
+
+                case 105://TODO: D
+                    testingClass.testFile403PMX();
+                    break;
+
+                case 106://TODO: D
+                    testingClassThreads.testFile47OX();
+                    break;
+
+                case 107://TODO: D
+                    testingClassThreads.testFile170OX();
+                    break;
+
+                case 108://TODO: D
+                    testingClassThreads.testFile403OX();
+                    break;
+
+                case 109://TODO: D
+                    testingClassThreads.testFile47PMX();
+                    break;
+
+                case 110://TODO: D
+                    testingClassThreads.testFile170PMX();
+                    break;
+
+                case 111://TODO: D
+                    testingClassThreads.testFile403PMX();
+                    break;
 
                 default:
                     System.out.println("Brak takiej opcji");

@@ -26,72 +26,72 @@ public class TestingClassThreads {
     public void testFile47PMX() {
         fileReader.read(file1);
         for (int threads = minThreads; threads <= maxThreads; threads++) {
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file47_pmx_swap_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file47_pmx_scramble_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file47_pmx_swap_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file47_pmx_scramble_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file47_pmx_swap_500_" + threads + "threads.txt", 500, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file47_pmx_scramble_500_" + threads + "threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file47_pmx_swap_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file47_pmx_scramble_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file47_pmx_swap_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file47_pmx_scramble_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file47_pmx_swap_500_" + threads + "_threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file47_pmx_scramble_500_" + threads + "_threads.txt", 500, threads);
         }
     }
 
     public void testFile47OX() {
         fileReader.read(file1);
         for (int threads = minThreads; threads <= maxThreads; threads++) {
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file47_ox_swap_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file47_ox_scramble_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file47_ox_swap_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file47_ox_scramble_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file47_ox_swap_500_" + threads + "threads.txt", 500, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file47_ox_scramble_500_" + threads + "threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file47_ox_swap_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file47_ox_scramble_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file47_ox_swap_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file47_ox_scramble_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file47_ox_swap_500_" + threads + "_threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file47_ox_scramble_500_" + threads + "_threads.txt", 500, threads);
         }
     }
 
     public void testFile170PMX() {
         fileReader.read(file2);
         for (int threads = minThreads; threads <= maxThreads; threads++) {
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file170_pmx_swap_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file170_pmx_scramble_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file170_pmx_swap_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file170_pmx_scramble_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file170_pmx_swap_500_" + threads + "threads.txt", 500, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file170_pmx_scramble_500_" + threads + "threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file170_pmx_swap_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file170_pmx_scramble_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file170_pmx_swap_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file170_pmx_scramble_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file170_pmx_swap_500_" + threads + "_threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file170_pmx_scramble_500_" + threads + "_threads.txt", 500, threads);
         }
     }
 
     public void testFile170OX() {
         fileReader.read(file2);
         for (int threads = minThreads; threads <= maxThreads; threads++) {
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file170_ox_swap_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file170_ox_scramble_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file170_ox_swap_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file170_ox_scramble_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file170_ox_swap_500_" + threads + "threads.txt", 500, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file170_ox_scramble_500_" + threads + "threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file170_ox_swap_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file170_ox_scramble_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file170_ox_swap_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file170_ox_scramble_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file170_ox_swap_500_" + threads + "_threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file170_ox_scramble_500_" + threads + "_threads.txt", 500, threads);
         }
     }
 
     public void testFile403PMX() {
         fileReader.read(file3);
         for (int threads = minThreads; threads <= maxThreads; threads++) {
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file403_pmx_swap_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file403_pmx_scramble_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file403_pmx_swap_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file403_pmx_scramble_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file403_pmx_swap_500_" + threads + "threads.txt", 500, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file403_pmx_scramble_500_" + threads + "threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file403_pmx_swap_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file403_pmx_scramble_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file403_pmx_swap_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file403_pmx_scramble_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.PMX, "file403_pmx_swap_500_" + threads + "_threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.PMX, "file403_pmx_scramble_500_" + threads + "_threads.txt", 500, threads);
         }
     }
 
     public void testFile403OX() {
         fileReader.read(file3);
         for (int threads = minThreads; threads <= maxThreads; threads++) {
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file403_ox_swap_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file403_ox_scramble_2000_" + threads + "threads.txt", 2000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file403_ox_swap_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file403_ox_scramble_1000_" + threads + "threads.txt", 1000, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file403_ox_swap_500_" + threads + "threads.txt", 500, threads);
-            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file403_ox_scramble_500_" + threads + "threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file403_ox_swap_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file403_ox_scramble_2000_" + threads + "_threads.txt", 2000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file403_ox_swap_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file403_ox_scramble_1000_" + threads + "_threads.txt", 1000, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SWAP, CrossType.OX, "file403_ox_swap_500_" + threads + "_threads.txt", 500, threads);
+            testForPopulationParallel(fileReader.getMatrix(), MutationType.SCRAMBLE, CrossType.OX, "file403_ox_scramble_500_" + threads + "_threads.txt", 500, threads);
         }
     }
 
@@ -105,7 +105,7 @@ public class TestingClassThreads {
         long timeThreads = 0;
         long timeSequential = 0;
 
-        int iterations = 5;
+        int iterations = 3;
 
         for (int i = 0; i < iterations; i++) {
 
@@ -140,7 +140,7 @@ public class TestingClassThreads {
 
         }
 
-        fileWriter.save(fileName, "generacja;koszt_sciezki;czas_wykonania_sekwencyjnego;czas_wykonania_wielowątkowego;ilość_wątkow", true);
+        fileWriter.save(fileName, "generacja;koszt_sciezki;czas_wykonania_sekwencyjnego[ms];czas_wykonania_wielowątkowego[ms];ilość_wątkow", true);
         int lastKey = bestSolutionMap.lastKey();
         for (int key : bestSolutionMap.keySet()) {
             if (key == lastKey) {

@@ -120,7 +120,7 @@ public class TestingClassSequence {
         TreeMap<Integer, Integer> bestSolutionMap = new TreeMap<>();
         long time = 0;
 
-        int iterations = 5;
+        int iterations = 3;
 
         for (int i = 0; i < iterations; i++) {
 
@@ -146,12 +146,13 @@ public class TestingClassSequence {
 
                 bestCost = genAlg.getBestSolutionMap().lastEntry().getValue();
                 bestSolutionMap = new TreeMap<>(genAlg.getBestSolutionMap());
+                time = genAlg.getTime();
 
             }
 
         }
 
-        fileWriter.save(fileName, "generacja;koszt_sciezki;czas_wykonania", true);
+        fileWriter.save(fileName, "generacja;koszt_sciezki;czas_wykonania[ms]", true);
         int lastKey = bestSolutionMap.lastKey();
         for (int key : bestSolutionMap.keySet()) {
             if (key == lastKey) {

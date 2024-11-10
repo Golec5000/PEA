@@ -89,6 +89,8 @@ public class GenAlgThreads implements AlgInterface {
                 // Kod zapisujący generację
                 getGeneration(generation);
 
+                if (generation % 200 == 0) System.out.println("Generacja: " + generation);
+
                 startTimeParaell1 = System.currentTimeMillis();
 
                 // Równoległa selekcja
@@ -125,8 +127,8 @@ public class GenAlgThreads implements AlgInterface {
             }
 
 
-            System.out.println("Czas trwania algorytmu (część sekwencyjna): " + GenAlgHelper.formatTime(sequenceTime));
-            System.out.println("Czas trwania algorytmu (część wielowątkowa): " + GenAlgHelper.formatTime(parallelTime));
+//            System.out.println("Czas trwania algorytmu (część sekwencyjna): " + GenAlgHelper.formatTime(sequenceTime));
+//            System.out.println("Czas trwania algorytmu (część wielowątkowa): " + GenAlgHelper.formatTime(parallelTime));
 
             executor.shutdownNow();
 
@@ -146,7 +148,7 @@ public class GenAlgThreads implements AlgInterface {
         if (ratedPopulation[bestIndex] < getBestSolution()) {
             setBestSolution(ratedPopulation[bestIndex]);
             setBestPath(population[bestIndex]);
-            System.out.println("Znaleziono nowe rozwiązanie: " + getBestSolution());
+//            System.out.println("Znaleziono nowe rozwiązanie: " + getBestSolution());
         }
     }
 
